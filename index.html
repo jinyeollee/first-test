@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TODO LIST</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <h1>TODO LIST</h1>
+      <div style="display: flex; align-items: center; gap: 1em;">
+        <span id="welcomeMsg" style="font-size:1rem; color:#333;"></span>
+        <button id="loginBtn" style="font-size: 1rem; padding: 0.5em 1em;">로그인</button>
+      </div>
+    </div>
+    <p class="desc">이곳에 해야할 일을 적어주세요</p>
+    <div class="input-row">
+      <input class="memo-input" id="memoInput" placeholder="여기에 할일을 입력하세요" />
+      <button class="add-btn" id="addBtn" title="추가"><span>+</span></button>
+    </div>
+    <ul class="memo-list" id="memoList"></ul>
+    <button class="clear-btn" id="clearBtn">Clear All</button>
+  </div>
+  <script type="module" src="app.js"></script>
+  <script>
+    document.getElementById('loginBtn').onclick = function() {
+      window.location.href = 'login.html';
+    };
+  </script>
+</body>
+</html>

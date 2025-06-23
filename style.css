@@ -1,0 +1,166 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f4f6fb;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+.container {
+  background: #fff;
+  margin-top: 40px;
+  padding: 32px 24px 24px 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  width: 100%;
+  max-width: 600px;
+}
+h1 {
+  text-align: center;
+  color: #23272f;
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  margin-top: 0;
+}
+.desc {
+  text-align: center;
+  color: #b0b3b8;
+  font-size: 1rem;
+  margin-bottom: 18px;
+  margin-top: 0;
+}
+.input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.memo-input {
+  flex: 1;
+  padding: 12px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  transition: border 0.2s;
+}
+.memo-input:focus {
+  border: 1.5px solid #7b61ff;
+}
+.add-btn {
+  width: 44px;
+  height: 44px;
+  background: #7b61ff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.add-btn:hover {
+  background: #5f43e9;
+}
+.memo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.memo-item {
+  background: #fff;
+  border: 2px solid #7b61ff;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 1.08rem;
+  box-sizing: border-box;
+  min-height: 44px;
+}
+.memo-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+.check-btn {
+  background: none;
+  border: none;
+  color: #7b61ff;
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-right: 2px;
+}
+.memo-text {
+  flex: 1;
+  color: #23272f;
+  word-break: break-all;
+}
+.memo-item.checked .memo-text {
+  color: #b0b3b8;
+  text-decoration: line-through;
+}
+.delete-btn {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-left: 6px;
+}
+.delete-btn svg {
+  width: 22px;
+  height: 22px;
+  display: block;
+  fill: #222;
+  stroke: #222;
+  transition: fill 0.2s, stroke 0.2s;
+}
+.delete-btn:hover svg {
+  fill: #e74c3c;
+  stroke: #e74c3c;
+}
+.clear-btn {
+  width: 100%;
+  padding: 12px;
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.2s;
+}
+.clear-btn:hover {
+  background: #c0392b;
+}
+.star-btn {
+  background: none;
+  border: none;
+  color: #ffb6d5;
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-left: 6px;
+  transition: color 0.2s;
+}
+.star-btn.active {
+  color: #ff69b4;
+} 
