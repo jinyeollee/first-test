@@ -1,0 +1,17 @@
+1. FDK_Module을 Web에서 사용하기 위한 Sample 프로그램 (FDK_Link)
+  1) CAT 단말기 사용
+    (1) CAT을 단말기 기능으로 사용 ( CAT에서 승인 ) [POS는 여신협회 인증을 받지 않고 사용할 수 있음]
+        // CAT에서 자체 승인이 되며 승인 결과와 기본정보만 POS에 반환됨.
+        FDK_Module_Web_CAT_SecuritySafe.html / js
+    (2) CAT을 리더기 기능으로 사용 ( POS에서 승인 : 단말기를 리더기로 사용 ) [POS는 여신협회 인증을 받아야 함]
+        // CAT을 보안리더기처럼 리더기로 사용함, CAT을 리더기로 사용하여 카드정보를 POS에서 획득하여 POS에서 승인이 이루어 짐.
+        FDK_Module_Web_CAT_Read.html / js
+    (3) CAT을 프린터 기능으로 사용 ( 영수증, 사인, 바코드, 이미지 출력 )
+        // CAT에게 출력을 시킬 수 있음, 영수증형태의 텍스트보내거나, 사인이미지 데이터, 바코드 데이터, 이미지 데이터를 전송하여 출력 할 수 있음
+        // 이미지 출력 방식은 이미지 데이터를 전송하여 출력 할 수 있으며 이미지를 CAT에 저장 시킨후 CAT에 저장된 이미지를 출력 하는 방식이 있음.
+        FDK_Module_Web_CAT_Print.html / js
+
+  2) 보안리더기 사용 ( 카드읽기, 승인 ) [POS는 여신협회 인증을 받아야 함]
+     // FDK_Module의 장치(리더기, 사인패드/PIN패드) API 사용, 승인 요청 API사용
+     FDK_Module_Web_SCR_Reader.html / js
+

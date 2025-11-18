@@ -1,0 +1,320 @@
+﻿<head>
+
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<script	src="./FDK_Link/FDK_Link_Local_Server.js"></script>
+<script	src="./FDK_Link/install/FDK_Link_Version.js"></script>
+<link rel="stylesheet" href="./FDK_Link/jquery-ui.css">
+<script src="./FDK_Link/jquery-ui.js"></script>
+<script type = "text/javascript" src="FDK_Module_Web_CAT_SecuritySafe.js" charset='utf-8'></script>
+
+</head>
+
+<div id = "Progress_Loading">
+<img src="./FDK_Link/Progress.gif"/>
+</div>
+
+<style type = "text/css">
+#Progress_Loading
+{
+   position: absolute;
+   left: 50%;
+   top: 50%;
+   div{background:#fff, opacity:0.6;}
+}
+</style>
+
+<div id="dialog-confirm" title="FDK_Link" style="hide:'true'">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 25px 0;"></span>FDK_Link 설치 확인에 실패했습니다.<br>FDK_Link 미설치 시에는 '설치' 버튼을 누르시고<br>이미 설치된 경우에는 '실행' 버튼을  누른 후 '연결' 버튼을 눌러주세요</p>
+</div>
+
+	<table border = 0 cellspacing = 10>
+	<tr>
+    <td align=center colspan=2>
+	<br>
+      <b> * CAT : SecuritySafe [ CAT 단말기 연동 : CAT을 단말기 기능으로 사용 ] * </b><br><br>
+       ( MPOS-1700AE : 특수 -> 2.사용자용 -> 3.기능설정 -> 6.POS설정 -> 2.직렬통신 -> 연동유형:1.단말기 ) <br>
+      <hr align = left width = 730>
+      </td>
+	</tr>
+	<tr>
+		<td>
+			<!---------------------------------------------------------------------------------------->
+			<table cellspacing = 8>
+				<tr>
+					<td rowspan="2"><input type="button"  id="btnSearchCAT" onclick="btnSearchCAT_click();" value= "보안 단말기 찾기" style="width:110;height:50;"/></td>
+					 <td><font size=2>Port</font></td>
+					 <td><input type="text" id="txtPortNoCAT"  disabled/></td>
+				</tr>
+				<tr>
+					 <td><font size=2>Baudrate</font></td> 
+					 <td><input type="text" id="txtBaudrateNoCAT"  disabled/></td>
+				</tr>
+			</table>
+			<hr align = left width = 350>
+			<!---------------------------------------------------------------------------------------->
+			<table cellspacing = 3>
+				<tr>
+					<td><input type="button"  id="btnCreditAuth" onclick="btnCreditAuth_click();" value="신용승인" style="width:170;height:25;"/></td>
+					<td><input type="button"  id="btnCreditCancel" onclick="btnCreditCancel_click();" value="신용취소" style="width:170;height:25;"/></td>
+				</tr>
+			</table>
+			<hr align = left width = 350>
+			<!---------------------------------------------------------------------------------------->
+			<table cellspacing = 3>
+				<tr>
+					<td><input type="button"  id="btnCashBillAuth" onclick="btnCashBillAuth_click();" value="현금영수증승인" style="width:170;height:25;"/></td>
+					<td><input type="button"  id="btnCashBillCancel" onclick="btnCashBillCancel_click();" value="현금영수증취소" style="width:170;height:25;"/></td>
+				</tr>
+			</table>			
+		</td>
+		<td align="top">
+		<!---------------------------------------------------------------------------------------->
+		<table cellspacing = 5 border="0">
+			<tr >
+			<td><font size=2>사업자 번호</font></td>
+			<td><input type="text" id="txtBizNo"    value="3000000000" style="width:215;height:25;"/></td>
+			</tr>
+			<tr>
+				<td><font size=2>거래금액</font></td>
+				<td><input type="text" id="txtTransactionAmount"  value="1004" style="width:110;height:25;"/></td>
+			</tr>
+			<tr>
+			<td><font size=2>승인번호</font></td>
+			<td><input type="text" id="txtAuthorizationNumber"  style="width:215;height:25;"/></td>
+			</tr>
+			<tr>
+			<td><font size=2>승인날짜</font></td>
+			<td><input type="text" id="txtAuthorizationDate"  style="width:215;height:25;"/></td>
+			</tr>
+		</table>
+		<!---------------------------------------------------------------------------------------->
+		<table>
+			<tr>
+				 
+			</tr>
+		</table>		
+		</td>
+		
+	</tr>
+	<tr>
+		<td colspan=2><input type="radio" name="cashTransactionType" checked="checked" value="00" />개인/Personal
+		<input type="radio" name="cashTransactionType"                   value="01" />사업자/Business
+		<input type="radio" name="cashTransactionType"                   value="99" />자진발급/Voluntary</td>
+	</tr>
+	<tr>
+		<td colspan=2>
+			<hr align = left width = 730>
+		</td>
+	</tr>
+	<tr>
+		<td colspan=2>
+			<font size=3>Result Text</font></td>
+		</td>
+	</tr>
+	<tr>
+		<td colspan=2>
+			<textarea type="text" id="txtResultText" style="width:500;height:300;"></textarea>
+		</td>
+	</tr>
+</table>
+	
+<script language=javascript> 
+
+var ckbCardReadRetry_E122 = document.getElementById("ckbCardReadRetry_E122");
+var ckbReturnCardEncodingData = document.getElementById("ckbReturnCardEncodingData");
+var ckbReturnMerchantEncryptData = document.getElementById("ckbReturnMerchantEncryptData");
+var ckbReturnFDKEncryptData = document.getElementById("ckbReturnFDKEncryptData");
+var ckbReturnFDKEMVData = document.getElementById("ckbReturnFDKEMVData");
+var ckbCATUseSign = document.getElementById("ckbCATUseSign");
+var ckbCATUsePIN = document.getElementById("ckbCATUsePIN");
+
+window.onload = function()
+{
+	setTimeout(VAN_Module_Init, 0); // HTML 화면이 보여진 후 VAN_Module_Init() 함수가 호출되게 하기 위하여 setTimeout() API 를 사용하였습니다.
+}
+
+function VAN_Module_Init()
+{
+	var ret = FDK_LinkConnect();
+	
+	if ( ret == "0" )
+	{ // API 호출 성공일때 수행
+		ret = FDK_LinkPID_ReleaseAll(); // 브라우저 갱신 시 기존 PID 삭제, 모든 PID를 해제하고자 할 때 호출합니다. : 단. PID를 세션 등으로 관리하여 PID를 해제할 경우 호출할 필요가 없습니다. 
+		if ( ret == "0" )
+		{ // API 호출 성공일때 수행
+			UpdateCheck();
+		}
+	}
+	
+	//FDK_Link_Check(); // FDK_Link와의 접속 및 버전 확인 함수 	
+}
+
+
+function FDK_Link_Check()
+{
+	var strVer;
+	
+	strVer = FDK_LinkVersion();
+	if (strVer.localeCompare(fdk_link_version) == 0 && String(strVer).substring(0, 1) != '-')
+	{ // 접속성공이고 최신버전임.ex: strVer="22.6.16.10", fdk_link_version="22.6.16.10"
+		alert("FDK_Link_Check() 접속성공이고 최신버전");
+	}
+	else if (strVer.localeCompare(fdk_link_version) != 0 && String(strVer).substring(0, 1) != '-')
+	{ //  접속성공이고 최신버전이 아님 // ex: strVer="22.1.1.10", fdk_link_version="22.6.16.10"
+		alert("FDK_Link_Check() 접속성공이고 최신버전아님");
+	}
+	else 
+	{ //  접속실패 // ex: strVer="-909002, ErrorInfo : Error code:0\nmessage:undefined\nerror:NetworkError: Failed to execute 'send' on 'XMLHttpRequest': Failed to load 'http://127.0.0.1:6554/'."
+		alert("FDK_Link_Check() 접속실패");
+	}
+}
+
+function UpdateCheck()
+{
+	var strVer;
+	
+	strVer = FDK_LinkVersion();
+	if (strVer.localeCompare(fdk_link_version) != 0 && String(strVer).substring(0, 1) != '-')
+	{
+		var result = confirm('FDK_Link 업데이트 파일이 발견되었습니다. \n업데이트 하시겠습니까?');
+		if (result) {
+			FDK_LinkUpdate();
+			location.href = "./FDK_Link/install/FDK_Link_Setup_FDK_Module.exe";
+			
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+$(function() {
+	$( "#dialog-confirm" ).dialog({
+		autoOpen: false,
+		resizable: false,
+		height: "auto",
+		width: 370,
+		modal: true,
+		buttons: {
+			"설치": function() {
+				location.href = "./FDK_Link/install/FDK_Link_Setup_FDK_Module.exe";
+				$( this ).dialog( "close" );
+			},
+			"실행": function() {
+				location.href = "FdkLink:";
+			},
+			"연결": function() {
+				setTimeout(VAN_Module_Init, 0); // HTML 화면이 보여진 후 VAN_Module_Init() 함수가 호출되게 하기 위하여 setTimeout() API 를 사용하였습니다.
+				$( this ).dialog( "close" );
+			},
+			"취소": function() {
+				$( this ).dialog( "close" );
+			}
+		}
+	});
+});
+
+var arr = new Array;
+
+ $(document).keydown(function(event){
+	console.log(event.which);
+		
+	arr[0] = arr[1];
+	arr[1] = event.which;
+	
+	if(arr[0] == 73 && arr[1] == 67)
+		DisplayErr("000B8005");
+ })
+
+///////////////	보안 단말기 ///////////////
+
+//보안 단말기 찾기
+function btnSearchCAT_click() 
+{
+	SearchCAT();
+}
+
+//신용승인
+function btnCreditAuth_click() 
+{
+	var BusinessNumber, TransactionAmount, TaxAmount, TaxableAmount, NonTaxableAmount;
+	BusinessNumber    = txtBizNo.value;
+	TransactionAmount = txtTransactionAmount.value;
+	TaxAmount         = parseInt( TransactionAmount - (TransactionAmount / 1.1 ) );
+	TaxableAmount     = TransactionAmount - TaxAmount; 
+	TaxAmount        += "";
+	TaxableAmount    += "";
+	NonTaxableAmount  = "0";
+	
+	CreditAuth(BusinessNumber, TransactionAmount, TaxAmount, TaxableAmount, NonTaxableAmount );
+}
+
+//신용취소
+function btnCreditCancel_click() 
+{
+	var BusinessNumber, TransactionAmount, TaxAmount, TaxableAmount, NonTaxableAmount, OrgAuthNumber, OrgAuthDate8;
+	BusinessNumber    = txtBizNo.value;
+	TransactionAmount = txtTransactionAmount.value;
+	TaxAmount         = parseInt( TransactionAmount - (TransactionAmount / 1.1 ) );
+	TaxableAmount     = TransactionAmount - TaxAmount; 
+	TaxAmount        += "";
+	TaxableAmount    += "";
+	NonTaxableAmount  = "0";
+	OrgAuthNumber     = txtAuthorizationNumber.value;
+	OrgAuthDate8      = txtAuthorizationDate.value.substring(0, 8);
+
+	CreditCancel(BusinessNumber, TransactionAmount, TaxAmount, TaxableAmount, NonTaxableAmount, OrgAuthNumber, OrgAuthDate8 );
+}
+
+//현금영수증승인
+function btnCashBillAuth_click() 
+{
+
+	var CashTransactionType = "";
+	var chkRadio = document.getElementsByName("cashTransactionType");
+	for(var i=0; i<chkRadio.length;i++ ) {
+		if( chkRadio[i].checked == true ) {
+			CashTransactionType = chkRadio[i].value;
+			break;
+		}
+	}
+	
+	var BusinessNumber, TransactionAmount, TaxAmount, TaxableAmount, NonTaxableAmount;
+	BusinessNumber    = txtBizNo.value;
+	TransactionAmount = txtTransactionAmount.value;
+	TaxAmount         = parseInt( TransactionAmount - (TransactionAmount / 1.1 ) );
+	TaxableAmount     = TransactionAmount - TaxAmount; 
+	TaxAmount        += "";
+	TaxableAmount    += "";
+	NonTaxableAmount  = "0";
+	CashBillAuth( CashTransactionType, BusinessNumber, TransactionAmount, TaxAmount, TaxableAmount, NonTaxableAmount );
+}
+
+//현금영수증취소
+function btnCashBillCancel_click() 
+{
+
+	var CashTransactionType = "";
+	var chkRadio = document.getElementsByName("cashTransactionType");
+	for(var i=0; i<chkRadio.length;i++ ) {
+		if( chkRadio[i].checked == true ) {
+			CashTransactionType = chkRadio[i].value;
+			break;
+		}
+	}
+	
+	var BusinessNumber, TransactionAmount, TaxAmount, TaxableAmount, NonTaxableAmount, OrgAuthNumber, OrgAuthDate8;
+	BusinessNumber    = txtBizNo.value;
+	TransactionAmount = txtTransactionAmount.value;
+	TaxAmount         = parseInt( TransactionAmount - (TransactionAmount / 1.1 ) );
+	TaxableAmount     = TransactionAmount - TaxAmount; 
+	TaxAmount        += "";
+	TaxableAmount    += "";
+	NonTaxableAmount  = "0";
+	OrgAuthNumber     = txtAuthorizationNumber.value;
+	OrgAuthDate8      = txtAuthorizationDate.value.substring(0, 8);
+	CashBillCancel( CashTransactionType, BusinessNumber, TransactionAmount, TaxAmount, TaxableAmount, NonTaxableAmount, OrgAuthNumber, OrgAuthDate8 );
+
+}
+
+</script>

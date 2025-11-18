@@ -1,0 +1,299 @@
+<head>
+
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<script	src="./FDK_Link/FDK_Link_Local_Server.js"></script>
+<script	src="./FDK_Link/install/FDK_Link_Version.js"></script>
+<link rel="stylesheet" href="./FDK_Link/jquery-ui.css">
+<script src="./FDK_Link/jquery-ui.js"></script>
+
+<script type = "text/javascript" src="FDK_Module_Web_SCR_Reader_HDS.js" charset='utf-8'></script>
+
+</head>
+
+<div id = "Progress_Loading">
+<img src="./FDK_Link/Progress.gif"/>
+</div>
+
+<style type = "text/css">
+#Progress_Loading
+{
+   position: absolute;
+   left: 50%;
+   top: 50%;
+   div{background:#fff, opacity:0.6;}
+}
+</style>
+
+<div id="dialog-confirm" title="FDK_Link" style="hide:'true'">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 25px 0;"></span>
+  FDK_Link 설치 확인에 실패했습니다.<br>FDK_Link 미설치 시에는 '설치' 버튼을 누르시고<br>이미 설치된 경우에는 '실행' 버튼을  누른 후 '연결' 버튼을 눌러주세요</p>
+</div>
+
+<table align="center" border = 0>
+	<tr>
+		<td align="center">
+			<br><b> [ 현대백화점 멤버십 카드 읽기 ] </b><br><br>
+			<hr align="center" width = 400>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<!---------------------------------------------------------------------------------------->
+			<table cellspacing = 5 align="center">
+				<tr>
+					<td colspan="2">
+						<input type="text" id="txtMainInfo" style="border:0;width:390;" value= "버튼 :" >
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<input type="text" id="txtSubInfo" style="border:0;width:390;" value= "상태 :" >
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<TEXTAREA id="txtResult" ROWS=5 COLS=45 readonly></TEXTAREA>
+					</td>
+					<td>
+						<input type="button"  id="btnClear" onclick="btnClear_click();" value="Clear" style="width:50;height:80;">
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<table cellspacing = 10>
+				<tr>
+					<td rowspan="2"><input type="button"  id="btnSearchMultiPad" onclick="btnSearchMultiPad_click();" value= "멀티패드 찾기" style="width:140;height:50;"></td>
+					 <td><font size=2>Port</font></td>
+					 <td><input type="text" id="txtPortNo"  disabled></td>
+				</tr>
+				<tr>
+					 <td><font size=2>Baudrate</font></td> 
+					 <td><input type="text" id="txtBaudrateNo"  disabled></td>
+				</tr>
+			</table>
+			<hr align = "center" width = 400>
+			<!---------------------------------------------------------------------------------------->
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<table cellspacing = 10>
+				<tr>
+					<td><input type="checkbox" id="ckbCardReadRetry" checked><font size=2>연속 읽기</font></td>
+				</tr>
+				<tr>
+					<td><input type="button"  id="btnMemberShipCardRead" onclick="btnMemberShipCardRead_click();" value="멤버십 카드 읽기" style="width:190;height:28;"></td>
+					<td><input type="button"  id="btnMemberShipCardReadStop" onclick="btnMemberShipCardReadStop_click();" value="멤버십 카드 읽기 종료" style="width:190;height:28;"></td>
+				</tr>
+			</table>
+			<hr align = "center" width = 400>
+			<!---------------------------------------------------------------------------------------->
+			<table cellspacing = 10>
+				<tr>
+					<td align = "left"><font size=2>Pin data</font></td>
+					<td><input type="text" id="txtPinData" disabled></td>
+				</tr>
+			</table>
+			<table cellspacing = 10>
+				<tr>
+					<td><input type="button"  id="btnPinpadRead" onclick="btnPinpadRead_click();" value="핀패드 읽기" style="width:190;height:28;"></td>
+					<td><input type="button"  id="btnPinpadReadStop" onclick="btnPinpadReadStop_click();" value="핀패드 읽기 종료" style="width:190;height:28;"></td>
+				</tr>
+			</table>
+			<hr align = "center" width = 400>
+			<!---------------------------------------------------------------------------------------->
+			<table cellspacing = 10>
+				<tr>
+					<td><input type="button"  id="btnReset" onclick="btnReset_click();" value="초기화" style="width:392;height:28;"></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+
+<script language=javascript> 
+
+var ckbCardReadRetry = document.getElementById("ckbCardReadRetry");
+
+window.onload = function()
+{
+	setTimeout(VAN_Module_Init, 0); // HTML 화면이 보여진 후 VAN_Module_Init() 함수가 호출되게 하기 위하여 setTimeout() API 를 사용하였습니다.
+}
+
+function VAN_Module_Init()
+{
+	var ret = FDK_LinkConnect();
+	
+	if ( ret == "0" )
+	{ // API 호출 성공일때 수행
+		ret = FDK_LinkPID_ReleaseAll(); // 브라우저 갱신 시 기존 PID 삭제, 모든 PID를 해제하고자 할 때 호출합니다. : 단. PID를 세션 등으로 관리하여 PID를 해제할 경우 호출할 필요가 없습니다. 
+		if ( ret == "0" )
+		{ // API 호출 성공일때 수행
+			UpdateCheck();
+		}
+	}
+}
+
+function UpdateCheck()
+{
+	var strVer;
+	
+	strVer = FDK_LinkVersion();
+	if (strVer.localeCompare(fdk_link_version) != 0 && String(strVer).substring(0, 1) != '-')
+	{
+		var result = confirm('FDK_Link 업데이트 파일이 발견되었습니다. \n업데이트 하시겠습니까?');
+		if (result) {
+			FDK_LinkUpdate();
+			location.href = "./FDK_Link/install/FDK_Link_Setup_FDK_Module.exe";
+			
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+$(function() {
+	$( "#dialog-confirm" ).dialog({
+		autoOpen: false,
+		resizable: false,
+		height: "auto",
+		width: 370,
+		modal: true,
+		buttons: {
+			"설치": function() {
+				location.href = "./FDK_Link/install/FDK_Link_Setup_FDK_Module.exe";
+				$( this ).dialog( "close" );
+			},
+			"실행": function() {
+				location.href = "FdkLink:";
+			},
+			"연결": function() {
+				setTimeout(VAN_Module_Init, 0); // HTML 화면이 보여진 후 VAN_Module_Init() 함수가 호출되게 하기 위하여 setTimeout() API 를 사용하였습니다.
+				$( this ).dialog( "close" );
+			},
+			"취소": function() {
+				$( this ).dialog( "close" );
+			}
+		}
+	});
+});
+
+///////////////보안 리더기 ///////////////
+
+//목록 지우기
+function btnClear_click()
+{
+	txtResult.value = "";
+}
+
+//멀티패드 찾기
+function btnSearchMultiPad_click() 
+{
+	Display_MainInfo('멀티패드 찾기');
+
+	//PID 초기화
+	ClearPID();	
+	
+	SearchMultiPad();
+}
+
+//멤버십 카드 읽기
+function btnMemberShipCardRead_click()
+{
+	//var result = confirm('멤버십 카드 읽기를 시작 하시겠습니까?');
+	//if (result == true)
+	{
+		Display_MainInfo('멤버십 카드 읽기');
+		Display_SubInfo('멤버십 카드 읽기를 시작합니다.');
+
+		MemberShipCardReadStart();
+	}
+}
+
+function MemberShipCardReadStart()
+{
+	//PID 초기화
+	ClearPID();
+	
+	AsycMemberShipCardRead("1", "10069371", "1004");
+}
+
+//멤버십 카드 읽기 종료
+function btnMemberShipCardReadStop_click()
+{
+	if (g_PID_CardRead != 0)
+	{
+		//var result = confirm('멤버십 카드 읽기를 종료 하시겠습니까?');
+		//if (result == true)
+		{
+			//PID 초기화
+			ClearPID();
+			
+			Display_MainInfo('멤버십 카드 읽기 종료');
+			Display_SubInfo('멤버십 카드 읽기가 종료되었습니다.');
+		}	
+	}
+	else
+	{
+		Display_SubInfo('멤버십카드 읽기가 실행 중이 아닙니다.');
+	}
+
+	//카드 리스트 삭제
+	MemberShipCardRead_List_RemoveAll();
+}
+
+//핀패드 읽기
+function btnPinpadRead_click()
+{
+	//var result = confirm('핀패드 읽기를 시작 하시겠습니까?');
+	//if (result == true)
+	{
+		Display_MainInfo('핀패드 읽기');
+		Display_SubInfo('핀패드 읽기를 시작합니다.');
+	
+		//PID 초기화
+		ClearPID();
+		
+		AsycPinPadRead("비밀번호를 입력 하세요");
+	}	
+}
+
+//핀패드 읽기 종료
+function btnPinpadReadStop_click()
+{
+	if (g_PID_PinPadRead != 0)
+	{
+		//var result = confirm('핀패드 읽기 종료를 종료 하시겠습니까?');
+		//if (result == true)
+		{
+			//PID 초기화
+			ClearPID();	
+			
+			Display_MainInfo('핀패드 읽기 종료');
+			Display_SubInfo('핀패드 읽기가 종료되었습니다.');
+
+			txtPinData.value = "";
+		}
+	}
+	else
+	{
+		Display_SubInfo('핀패드 읽기가 실행 중이 아닙니다.');
+	}
+}
+
+//멀티패드 초기화
+function btnReset_click()
+{
+	Display_MainInfo('초기화');
+
+	//PID 초기화
+	ClearPID();
+	
+	MultiPadReset();
+}
+
+</script>
