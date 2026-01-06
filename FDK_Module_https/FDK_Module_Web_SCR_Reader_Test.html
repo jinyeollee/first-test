@@ -1,0 +1,723 @@
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <script	src="./FDK_Link/FDK_Link_Local_Server.js"></script>
+    <script	src="./FDK_Link/install/FDK_Link_Version.js"></script>
+    <link rel="stylesheet" href="./FDK_Link/jquery-ui.css">
+    <script src="./FDK_Link/jquery-ui.js"></script>
+    
+    <script type = "text/javascript" src="FDK_Module_Web_SCR_Reader_Test.js" charset='utf-8'></script>
+    
+    </head>
+    
+    <div id = "Progress_Loading">
+    <img src="./FDK_Link/Progress.gif"/>
+    </div>
+    
+    <style type = "text/css">
+    #Progress_Loading
+    {
+       position: absolute;
+       left: 50%;
+       top: 50%;
+       /* div{background:#fff, opacity:0.6;} 잘못된 CSS이므로 주석처리 */
+       background:#fff;
+       opacity:0.6;
+    }
+    </style>
+    
+    <div id="dialog-confirm" title="FDK_Link" style="hide:'true'">
+      <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 25px 0;"></span>FDK_Link 설치 확인에 실패했습니다.<br>FDK_Link 미설치 시에는 '설치' 버튼을 누르시고<br>이미 설치된 경우에는 '실행' 버튼을  누른 후 '연결' 버튼을 눌러주세요</p>
+    </div>
+    
+    <table border = 0 cellspacing = 10>
+        <tr>
+            <tr>
+              <td align=center colspan=2>
+                <b> * SCR : Reader [ 보안리더기 사용 : 보안리더기 읽기 테스트에 사용 ] * </b><br><br>
+                ( FDK_Module의 장치(리더기, 사인패드/PIN패드) API 사용, 테스트 ) <br>
+                <hr align = left width = 730>
+              </td>
+            </tr>      	
+            <td>
+                <!---------------------------------------------------------------------------------------->
+                <table border = 0 cellspacing = 4>
+                    <tr>
+                        <td colspan="3">
+                            <input type="text" id="txtInfo" style="border:0;width:370;"  disabled/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <TEXTAREA id="txtResult" ROWS=10 COLS=50 readonly></TEXTAREA>
+                        </td>
+                    </tr>
+                    <tr>
+                         <td><font size=2>사업자 번호</font></td>
+                         <td><input type="text" id="txtBizNo"    value="3000000000" /></td>
+                         <td rowspan="3"><input type="button"  id="btnPosDownload" onclick="btnPosDownload_click();" value="POS Download" style="width:110;height:80;"/></td>
+                    </tr>
+                    <tr>
+                         <td><font size=2>POS 일련 번호</font></td>
+                         <td><input type="text" id="txtSerialNo"  value="3000000000" /></td>
+                    </tr>
+                    <tr>
+                         <td><font size=2>CAT ID</font></td>
+                         <td><input type="text" id="txtCATID"  value="10069371"  disabled/></td>
+                    </tr>
+                </table>
+                <hr align = left width = 350>
+                <!---------------------------------------------------------------------------------------->
+                <table cellspacing = 8>
+                    <tr>
+                        <td rowspan="2"><input type="button"  id="btnSearchSCR" onclick="btnSearchSCR_click();" value= "보안 리더기 찾기" style="width:110;height:50;"/></td>
+                         <td><font size=2>Port</font></td>
+                         <td><input type="text" id="txtPortNo"  disabled/></td>
+                    </tr>
+                    <tr>
+                         <td><font size=2>Baudrate</font></td> 
+                         <td><input type="text" id="txtBaudrateNo"  disabled/></td>
+                    </tr>
+                </table>
+                <hr align = left width = 350>
+                <!---------------------------------------------------------------------------------------->
+                <table cellspacing = 4>
+                    <tr>
+                        <td>
+                            <select id = 'cmbKeydownloadMode'  style="width:200;height:25;">
+                                <option>기존 스펙</option>
+                                <option>뉴 스펙(스펙 개선 장비)</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="button"  id="btnKeyDownload" onclick="btnKeyDownload_click();" value= "보안 리더기 키 다운로드" style="width:150;height:25;"/>
+                        </td>
+                    </tr>
+                </table>
+                <hr align = left width = 350>
+                <!---------------------------------------------------------------------------------------->
+                <table cellspacing = 3>
+                    <tr>
+                        <td><input type="button"  id="btnIntegrityCheck" onclick="btnIntegrityCheck_click();" value="보안 리더기 무결성 검사" style="width:240;height:25;"/></td>
+                        <td rowspan="4"><input type="button"  id="btnReset" onclick="btnReset_click();" value="동작 초기화" style="width:110;height:100;"/></td>
+                    </tr>
+                    <tr>
+                         <td><hr align = left width = 240></td>
+                    </tr>
+                    <tr>
+                        <td><input type="button"  id="btnStateCheck" onclick="btnStateCheck_click();" value="보안 리더기 상태 확인" style="width:240;height:25;"/></td>
+                    </tr>
+                    <tr>
+                        <td><input type="button"  id="btnStateCheckNew" onclick="btnStateCheckNew_click();" value="보안 리더기 상태 확인 (개선스펙)" style="width:240;height:25;"/></td>
+                    </tr>
+                </table>
+                <!---------------------------------------------------------------------------------------->
+                <hr align = left width = 350>
+                <table cellspacing = 8>
+                    <tr>
+                        <td rowspan="2"><input type="button"  id="btnSearchSignpad" onclick="btnSearchSignpad_click();" value= "서명패드 찾기" style="width:110;height:50;"/></td>
+                         <td><font size=2>Port</font></td>
+                         <td><input type="text" id="txtPortNoSignpad"  disabled/></td>
+                    </tr>
+                    <tr>
+                         <td><font size=2>Baudrate</font></td> 
+                         <td><input type="text" id="txtBaudrateNoSignpad"  disabled/></td>
+                    </tr>
+    
+                </table>
+                <!---------------------------------------------------------------------------------------->
+                <hr align = left width = 350>
+                <table>
+                    <tr>
+                        <td><input type="button"  id="btnResetSignpad" onclick="btnResetSignpad_click();" value="서명패드 동작 초기화" style="width:360;height:25;"/></td>
+                    </tr>
+                </table>
+                <!---------------------------------------------------------------------------------------->
+                <hr align = left width = 350>
+                <table cellspacing = 0>
+                    <tr>
+                        <td>
+                            <font size=2>Msg 1:</font>
+                            <input type="text" id="txtMsg1"  value="홍길동 고객님!" style="width:120;height:25;" onChange="InputCheck(txtMsg1,txtMsg1Len);" onkeypress = "this.onchange();" onpaste = "this.onchange();" oninput = "this.onchange();"/>
+                            <input type="text" id="txtMsg1Len" value="0/16 byte" style="text-align:right;border:0;width:70;"  disabled/> <script> txtMsg1.onchange(); </script>
+                        </td>
+                        <td  rowspan="2"><input type="button"  id="btnReqSignpadMsg" onclick="btnReqSignpadMsg_click();" value="메시지 출력" style="width:110;height:55;"/></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <font size=2>Msg 2:</font>
+                            <input type="text" id="txtMsg2"  value="이용동의" style="width:120;height:25;" onChange="InputCheck(txtMsg2,txtMsg2Len);" onkeypress = "this.onchange();" onpaste = "this.onchange();" oninput = "this.onchange();"/>
+                            <input type="text" id="txtMsg2Len" value="0/16 byte" style="text-align:right;border:0;width:70;"  disabled/> <script> txtMsg2.onchange(); </script>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <font size=2>Msg 3:</font>
+                            <input type="text" id="txtMsg3"  value="전자서명을" style="width:120;height:25;" onChange="InputCheck(txtMsg3,txtMsg3Len);" onkeypress = "this.onchange();" onpaste = "this.onchange();" oninput = "this.onchange();"/>
+                            <input type="text" id="txtMsg3Len" value="0/16 byte" style="text-align:right;border:0;width:70;"  disabled/> <script> txtMsg3.onchange(); </script>
+                        </td>
+                        <td  rowspan="2"><input type="button"  id="btnReqSignpad" onclick="btnReqSignpad_click();" value="서명 요청" style="width:110;height:55;"/></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <font size=2>Msg 4:</font>
+                            <input type="text" id="txtMsg4"  value="해주세요!" style="width:120;height:25;" onChange="InputCheck(txtMsg4,txtMsg4Len);" onkeypress = "this.onchange();" onpaste = "this.onchange();" oninput = "this.onchange();"/>
+                            <input type="text" id="txtMsg4Len" value="0/16 byte" style="text-align:right;border:0;width:70;"  disabled/> <script> txtMsg4.onchange(); </script>
+                        </td>
+                    </tr>
+                </table>
+                <!---------------------------------------------------------------------------------------->
+                <hr align = left width = 350>
+                <table>
+                    <tr>
+                        <td></td>
+                    </tr>
+                </table>
+            </td>			
+            <td valign = top>
+                <!---------------------------------------------------------------------------------------->
+                <table>
+                    <tr>
+                         <td><font size=2>거래금액</font></td>
+                         <td><input type="text" id="txtTransactionAmount"  value="1004" style="width:110;height:25;"/></td>
+                         <td><font size=2>승인번호</font></td>
+                         <td><input type="text" id="txtAuthorizationNumber"  style="width:115;height:25;"/></td>
+                    </tr>
+                    <tr>			 	
+                         <td colspan=2><input type="checkbox" id="ckbCardReadRetry_E122"  value='allow' /><font size=2>IC 카드 연속 읽기 허용</font></td>
+                         <td><font size=2>승인날짜</font></td>
+                         <td><input type="text" id="txtAuthorizationDate"  style="width:115;height:25;"/></td>
+                    </tr>
+                </table>
+                <hr align = left width = 350>			
+                <!---------------------------------------------------------------------------------------->
+                <table border=0>
+                    <tr>
+                         <td>
+                            <font size=2>슬롯사용
+                            <select id = 'cmbFallbackMode'  style="width:50;height:25;">
+                                <option></option>
+                                <option selected>F</option>
+                            </select> ' ' : IC카드만, 'F' : 모든 슬롯 사용
+                            </font>					
+                         </td>
+                    </tr>
+                    <tr>
+                         <td >
+                            <font size=2>읽기모드
+                            <select id = 'cmbReadMode'  style="width:50;height:25;">
+                                <option selected>C0</option>
+                                <option>E0</option>
+                            </select>  'C0' : 이벤트 값 무시, 'E0' : 이벤트 값 읽기
+                            </font>					
+                         </td>
+                    </tr>		 	
+                    <tr>
+                        <td>
+                            <input type="text" id="txtStateCredit"  style="width:115;height:25;"  disabled/>
+                            <input type="button"  id="btnCreditAuth" onclick="btnCreditAuth_click();" value= "승인"  style="width:110;height:25;"/>
+                            <input type="button"  id="btnCreditCancel" onclick="btnCreditCancel_click();" value= "승인 취소"  style="width:110;height:25;"/>
+                        </td>
+                    </tr>
+                </table>
+                <hr align = left width = 350>
+                <!---------------------------------------------------------------------------------------->
+                <table border = 0>
+                    <tr>					
+                         <font size=2>
+                         2(Event)는 모델에 따라서, 1(On)과 동작이 같을 수 있음.
+                         </font>	
+                    </tr>
+                    <tr>
+                         <td>
+                            <select id = 'cmbUseDeviceIC'  style="width:140;height:25;">
+                                <option>2 : IC Event On</option>
+                                <option selected>1 : IC On</option>
+                                <option>0 : IC Off</option>
+                            </select>
+                         </td>
+                         <td>
+                             <input type="checkbox" id ="ckbReturnCardEncodingData" /><font size=2>Return Card Encoding Data</font>
+                         </td>
+                    </tr>
+                    <tr>
+                         <td>
+                            <select id = 'cmbUseDeviceMSR'  style="width:140;height:25;">
+                                <option>2 : MSR Event On</option>
+                                <option selected>1 : MSR On</option>
+                                <option>0 : MSR Off</option>
+                            </select>
+                         </td>
+                         <td>
+                             <input type="checkbox" id="ckbReturnMerchantEncryptData"/><font size=2>Return Merchant Encrypt Data</font>
+                         </td>
+                    </tr>
+                    <tr>
+                         <td>
+                            <select id = 'cmbUseDeviceRF'  style="width:140;height:25;">
+                                <option>2 : RF Event On</option>
+                                <option selected>1 : RF On</option>
+                                <option>0 : RF Off</option>
+                            </select>
+                         </td>
+                         <td>
+                             <input type="checkbox" id ="ckbReturnFDKEncryptData"  checked disabled/><font size=2>Return FDK Encrypt Data</font>
+                         </td>
+                    </tr>
+                    <tr>
+                         <td>
+                         </td>
+                         <td>
+                             <input type="checkbox" id ="ckbReturnFDKEMVData"  checked disabled/><font size=2>Return FDK EMV Data</font>
+                         </td>
+                    </tr>
+                    <tr>
+                        <td colspan=2>					
+                            <input type="button"  id="btnUnLock_New_E16A" onclick="btnUnLock_New_E16A_click();" value= "UnLock (개선스펙)"  style="width:345;height:25;"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan=2>
+                            <input type="button"  id="btnCreditAuthNew_NonBlock" onclick="btnCreditAuthNew_NonBlock_click();" value= "비동기 카드읽기 (개선스펙) + 승인"  style="width:345;height:25;"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan=2>
+                            <input type="button"  id="btnCreditAuthNew" onclick="btnCreditAuthNew_click();" value= "승인 (개선스펙)"  style="width:345;height:25;"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan=2>
+                            <input type="button"  id="btnCreditCancelNew" onclick="btnCreditCancelNew_click();" value= "승인취소 (개선스펙)" style="width:345;height:25;"/>
+                        </td>
+                    </tr>
+                </table>	 
+                <hr align = left width = 350>
+                <!---------------------------------------------------------------------------------------->
+                <table  colspan = 2>
+                    <tr>
+                        <td rowspan="2"><input type="button"  id="btnCashICBalanceInquiryNew" onclick="btnCashICBalanceInquiryNew_click();" value= "현금IC 잔액 조회 (개선스펙)" style="width:130px;white-space: normal;height:55;"/></td>
+                        <td><input type="button"  id="btnCashICAuthNew" onclick="btnCashICAuthNew_click();" value= "현금IC 승인 (개선스펙)"  style="width:210;height:25;"/></td>
+                    </tr>
+                    <tr>
+                         <td><input type="button"  id="btnCashICCancelNew" onclick="btnCashICCancelNew_click();" value= "현금IC 승인취소 (개선스펙)"  style="width:210;height:25;"/></td>
+                    </tr>
+                </table>
+                <hr align = left width = 350>
+                <!---------------------------------------------------------------------------------------->
+                <table>				
+                    <tr>
+                        <td><font size=2>멤버십 카드 읽기</font></td>		
+                        <td><input type="button"  id="btnMemberShipCardReadStart" onclick="btnMemberShipCardReadStart_click();" value="시작" style="width:118;height:25;"/></td>
+                        <td><input type="button"  id="btnMemberShipCardReadStop" onclick="btnMemberShipCardReadStop_click();" value="종료" style="width:118;height:25;"/></td>
+                    </tr>				
+                </table>
+                <!---------------------------------------------------------------------------------------->			
+                <hr align = left width = 350>
+                <!---------------------------------------------------------------------------------------->
+                <table>				
+                    <tr>
+                        <td><font size=2>카드 이벤트 수신</font></td>		
+                        <td><input type="button"  id="btnCardEventStart" onclick="btnCardEventStart_click();" value="시작" style="width:118;height:25;"/></td>
+                        <td><input type="button"  id="btnCardEventStop" onclick="btnCardEventStop_click();" value="종료" style="width:118;height:25;"/></td>
+                    </tr>				
+                </table>
+                <hr align="left" width="350">
+                <table>
+                    <tr>
+                        <td><font size=2>신용카드읽기 방식</font></td>
+                        <td>
+                            <input type="radio" id="cardReadSync" name="CardReadSync" value="sync" checked>
+                            <label for="cardReadSync"><font size=2>동기</font></label>
+                            <input type="radio" id="cardReadAsync" name="CardReadSync" value="async">
+                            <label for="cardReadAsync"><font size=2>비동기</font></label>
+                        </td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td><font size=2>신용카드읽기(EMV CHECK)</font></td>
+                        <td>
+                            <input type="button" id="btnCreditCardReadE121_EMV_CHECK" onclick="btnCreditCardRead_E121_EMV_CHECK_click();" value="신용카드읽기(E121)" style="width:140px;height:25;"/>
+                            <input type="button" id="btnCreditCardReadE311_EMV_CHECK" onclick="btnCreditCardRead_E311_EMV_CHECK_click();" value="신용카드읽기(E311)" style="width:140px;height:25;"/>
+                        </td>
+                    </tr>
+                </table>
+                <!-- 자동반복 UI 추가 -->
+                <table style="margin-top:5px;">
+                    <tr>
+                        <td><label for="txtProgressCount"><font size=2>진행횟수:</font></label></td>
+                        <td><input type="text" id="txtProgressCount" value="0" style="width:50px;height:22px;text-align:right;"/></td>
+                        <td style="width:10px;"></td>
+                        <td><label for="txtCommandInterval"><font size=2>명령어간격(ms):</font></label></td>
+                        <td><input type="text" id="txtCommandInterval" value="1000" style="width:60px;height:22px;text-align:right;"/></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="padding-top:3px;">
+                            <input type="button" id="btnAutoRepeatE121" value="자동반복(E121)" style="width:120px;height:25px;" onclick="btnCreditCardRead_E121_EMV_CHECK_Auto_click();"/>
+                            <input type="button" id="btnAutoRepeatE311" value="자동반복(E311)" style="width:120px;height:25px;" onclick="btnCreditCardRead_E311_EMV_CHECK_Auto_click();"/>
+                            <input type="button" id="btnAutoRepeatStop" value="중지" style="width:60px;height:25px;" onclick="btnAutoRepeatStop_click();" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="padding-top:3px;">
+                            <label for="txtASyncCnt"><font size=2>ASync 반복횟수 :</font></label>
+                            <input type="text" id="txtASyncCnt" style="width:60px;height:22px;text-align:right;" value="1" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="padding-top:3px;">
+                            <input type="button" id="btnASyncResult" value="ASync 결과 출력" style="width:140px;height:25px;" onclick="CreditCardRead_ASyncResult();" />
+                            <input type="button" id="btnBMP2Data" value="BMP2Data(이미지파일읽기)" style="width:180px;height:25px;" onclick="Read_BMP2Data();" />
+                        </td>
+                    </tr>
+                </table>
+                <!-- // 자동반복 UI -->
+                <!---------------------------------------------------------------------------------------->
+            </td>
+        </tr>
+    </table>
+        
+    <script language=javascript> 
+    
+    var ckbCardReadRetry_E122 = document.getElementById("ckbCardReadRetry_E122");
+    var ckbReturnCardEncodingData = document.getElementById("ckbReturnCardEncodingData");
+    var ckbReturnMerchantEncryptData = document.getElementById("ckbReturnMerchantEncryptData");
+    var ckbReturnFDKEncryptData = document.getElementById("ckbReturnFDKEncryptData");
+    var ckbReturnFDKEMVData = document.getElementById("ckbReturnFDKEMVData");
+    var ckbCATUseSign = document.getElementById("ckbCATUseSign");
+    var ckbCATUsePIN = document.getElementById("ckbCATUsePIN");
+    
+    var autoEmvCheckTimer = null;
+    var autoProgressCount = 0;
+    var autoProgressMax = 0;
+    
+    window.onload = function()
+    {
+        setTimeout(VAN_Module_Init, 0); // HTML 화면이 보여진 후 VAN_Module_Init() 함수가 호출되게 하기 위하여 setTimeout() API 를 사용하였습니다.
+    }
+    
+    function VAN_Module_Init()
+    {
+        var ret = FDK_LinkConnect();
+        
+        if ( ret == "0" )
+        { // API 호출 성공일때 수행
+            ret = FDK_LinkPID_ReleaseAll(); // 브라우저 갱신 시 기존 PID 삭제, 모든 PID를 해제하고자 할 때 호출합니다. : 단. PID를 세션 등으로 관리하여 PID를 해제할 경우 호출할 필요가 없습니다. 
+            if ( ret == "0" )
+            { // API 호출 성공일때 수행
+                UpdateCheck();
+            }
+        }
+    }
+    
+    ////이벤트 수신 시작
+    //function EventStart_E1FF_EasyMod_NotUse()
+    //{
+    //    var iProcID = FDK_Module.FDK_Creat();
+    //    FDK_Module.FDK_Input(iProcID, "UseKeyEvent", "1");
+    //    FDK_Module.FDK_Input(iProcID, "@/Equipment/StateView_Show", "false");//화면에 상태창 보여주지 않음.
+    //    FDK_Module.FDK_Input(iProcID, "@/Common/HotKey_Cancel", "1011121B");//취소버튼
+    //    FDK_Module.FDK_Input(iProcID, "@/Common/ExecuteNonblock", "true");//nonblock 형태로 실행하는 옵션
+    //
+    //    var iRet = FDK_Module.FDK_Execute(iProcID, "Equipment/SecurityCardRead/Listen_Event_E1FF_EasyMod");
+    //    if (-8500 != iRet)
+    //    {
+    //    	FDK_Module.FDK_Destroy(iProcID);
+    //        alert("이벤트 모니터 실행 실패");
+    //        iProcID = 0;
+    //    }
+    //}
+    //
+    
+    function UpdateCheck()
+    {
+        var strVer;
+        
+        strVer = FDK_LinkVersion();
+        if (strVer.localeCompare(fdk_link_version) != 0 && String(strVer).substring(0, 1) != '-')
+        {
+            var result = confirm('FDK_Link 업데이트 파일이 발견되었습니다. \n업데이트 하시겠습니까?');
+            if (result) {
+                FDK_LinkUpdate();
+                location.href = "./FDK_Link/install/FDK_Link_Setup_FDK_Module.exe";
+                
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    $(function() {
+        $( "#dialog-confirm" ).dialog({
+            autoOpen: false,
+            resizable: false,
+            height: "auto",
+            width: 370,
+            modal: true,
+            buttons: {
+                "설치": function() {
+                    location.href = "./FDK_Link/install/FDK_Link_Setup_FDK_Module.exe";
+                    $( this ).dialog( "close" );
+                },
+                "실행": function() {
+                    location.href = "FdkLink:";
+                },
+                "연결": function() {
+                    setTimeout(VAN_Module_Init, 0); // HTML 화면이 보여진 후 VAN_Module_Init() 함수가 호출되게 하기 위하여 setTimeout() API 를 사용하였습니다.
+                    $( this ).dialog( "close" );
+                },
+                "취소": function() {
+                    $( this ).dialog( "close" );
+                }
+            }
+        });
+    });
+    
+    ///////////////보안 리더기 ///////////////
+    
+    //POS Download
+    function btnPosDownload_click() 
+    {
+        PosDownload();
+    }
+    
+    //보안 리더기 찾기
+    function btnSearchSCR_click() 
+    {
+        SearchSCR();
+    }
+    
+    //보안 리더기 키 다운로드
+    function btnKeyDownload_click() 
+    {
+        KeyDownload();
+    }
+    
+    //보안 리더기 무결성 검사
+    function btnIntegrityCheck_click() 
+    {
+        IntegrityCheck();
+    }
+    
+    //동작 초기화
+    function btnReset_click()
+    {
+        Reset();
+    }
+    
+    //보안리더기 상태 확인
+    function btnStateCheck_click()
+    {
+        StateCheck();
+    }
+    
+    //보안리더기 상태 확인 - (개선스펙)
+    function btnStateCheckNew_click()
+    {
+        StateCheckNew();
+    }
+    
+    //승인
+    function btnCreditAuth_click()
+    {
+        CreditAuth();
+    }
+    
+    //승인 취소
+    function btnCreditCancel_click()
+    {
+        CreditCancel();
+    }
+    
+    //UnLock - (개선스펙)
+    function btnUnLock_New_E16A_click()
+    {
+        UnLock_New_E16A();
+    }
+    
+    //비동기 카드읽기(개선스펙) + 승인
+    function btnCreditAuthNew_NonBlock_click()
+    {
+        CreditAuthNew_NonBlock();
+    }
+    
+    //승인 - (개선스펙)
+    function btnCreditAuthNew_click()
+    {
+        CreditAuthNew();
+    }
+    
+    //승인취소 - (개선스펙)
+    function btnCreditCancelNew_click()
+    {
+        CreditCancelNew();
+    }
+    
+    //현금IC 잔액 조회 - (개선스펙)
+    function btnCashICBalanceInquiryNew_click()
+    {
+        CashICBalanceInquiryNew();
+    }
+    
+    //현금IC 승인 - (개선스펙)
+    function btnCashICAuthNew_click()
+    {
+        CashICAuthNew();
+    }
+    
+    //현금IC 승인취소 - (개선스펙)
+    function btnCashICCancelNew_click()
+    {
+        CashICCancelNew();
+    }
+    
+    //멤버십 카드 읽기 시작
+    function btnMemberShipCardReadStart_click()
+    {
+        MemberShipCardRead_Start();
+    }
+    
+    //멤버십 카드 읽기 종료
+    function btnMemberShipCardReadStop_click()
+    {
+        MemberShipCardRead_Stop();
+    }
+    
+    //카드 이벤트 수신 시작
+    function btnCardEventStart_click()
+    {
+        CardEvent_Start();
+    }
+    
+    //카드 이벤트 수신 종료
+    function btnCardEventStop_click()
+    {
+        CardEvent_Stop();
+    }
+    
+    
+    
+    /////////////// 서명패드 ///////////////
+    //서명패드 찾기
+    function btnSearchSignpad_click() 
+    {
+        SearchSignpad();
+    }
+    
+    //서명패드 초기화
+    function btnResetSignpad_click() 
+    {
+        ResetSignpad();
+    }
+    
+    //서명패드 서명 요청
+    function btnReqSignpad_click() 
+    {
+        ReqSignpad();
+    }
+    
+    //서명패드 메시지 출력
+    function btnReqSignpadMsg_click()
+    {
+        ReqSignpadMsg();
+    }
+    
+    
+    //카드 읽기 E121
+    function btnCreditCardRead_E121_EMV_CHECK_click()
+    {
+        CreditCardRead_E121_EMV_CHECK();
+    }
+    
+    //카드 읽기 E311
+    function btnCreditCardRead_E311_EMV_CHECK_click()
+    {
+        CreditCardRead_E311_EMV_CHECK();
+    }
+    
+    // 자동반복 E121 버튼 클릭
+    function btnCreditCardRead_E121_EMV_CHECK_Auto_click() {
+        autoProgressMax = parseInt(document.getElementById('txtProgressCount').value) || 0;
+        var interval = parseInt(document.getElementById('txtCommandInterval').value) || 1000;
+        autoProgressCount = 0;
+        if (autoEmvCheckTimer) {
+            clearInterval(autoEmvCheckTimer);
+            autoEmvCheckTimer = null;
+        }
+        autoEmvCheckTimer = setInterval(function() {
+            if (autoProgressMax !== 0 && autoProgressCount >= autoProgressMax) {
+                btnAutoRepeatStop_click();
+                return;
+            }
+            autoProgressCount++;
+            document.getElementById('txtProgressCount').value = autoProgressCount;
+            var result = CreditCardRead_E121_EMV_CHECK_Auto();
+            if (result === false) {
+                btnAutoRepeatStop_click();
+            }
+        }, interval);
+    }
+    // 자동반복 E311 버튼 클릭
+    function btnCreditCardRead_E311_EMV_CHECK_Auto_click() {
+        autoProgressMax = parseInt(document.getElementById('txtProgressCount').value) || 0;
+        var interval = parseInt(document.getElementById('txtCommandInterval').value) || 1000;
+        autoProgressCount = 0;
+
+        if (autoEmvCheckTimer) {
+            clearInterval(autoEmvCheckTimer);
+            autoEmvCheckTimer = null;
+        }
+        autoEmvCheckTimer = setInterval(function() {
+
+            var blAnsyResultCheck = false;
+            blAnsyResultCheck = CreditCardRead_ASyncResult_Print();
+
+            if (blAnsyResultCheck == false ) {
+                btnAutoRepeatStop_click();
+                var strMsg = "비동기 결과 체크시 에러 발생하여 자동 종료";
+                console.log(strMsg);
+                alert(strMsg);
+                return;
+            }
+            autoProgressCount++;
+            document.getElementById('txtProgressCount').value = autoProgressCount;
+            var result = CreditCardRead_E311_EMV_CHECK_Auto();
+            if (result === false) {
+                btnAutoRepeatStop_click();
+            }
+        }, interval);
+
+        // 버튼 눌러졌을 경우 바로 한번은 실행.
+        btnCreditCardRead_E311_EMV_CHECK_click();
+    }
+    
+    
+    // 자동반복 중지 버튼 클릭
+    function btnAutoRepeatStop_click() {
+        if (autoEmvCheckTimer) {
+            clearInterval(autoEmvCheckTimer);
+            autoEmvCheckTimer = null;
+        }
+    }
+
+    function CreditCardRead_E121_EMV_CHECK_Auto() {
+        // 실제 동작은 JS에서 구현
+        return CreditCardRead_E121_EMV_CHECK();
+    }
+
+    function CreditCardRead_E311_EMV_CHECK_Auto() {
+        return CreditCardRead_E311_EMV_CHECK();
+    }
+
+    function CreditCardRead_ASyncResult() {
+        CreditCardRead_ASyncResult_Print();
+
+    }
+
+    function Read_BMP2Data() {
+        Device_BMP2Data();
+    }
+        
+    </script>

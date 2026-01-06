@@ -1,0 +1,433 @@
+﻿<head>
+
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<script	src="./FDK_Link/FDK_Link_Local_Server.js"></script>
+<script	src="./FDK_Link/install/FDK_Link_Version.js"></script>
+<link rel="stylesheet" href="./FDK_Link/jquery-ui.css">
+<script src="./FDK_Link/jquery-ui.js"></script>
+
+<script type = "text/javascript" src="FDK_Module_Web_CAT_Print.js" charset='utf-8'></script>
+
+</head>
+
+<div id = "Progress_Loading">
+<img src="./FDK_Link/Progress.gif"/>
+</div>
+
+<style type = "text/css">
+#Progress_Loading
+{
+   position: absolute;
+   left: 50%;
+   top: 50%;
+   div{background:#fff, opacity:0.6;}
+}
+</style>
+
+<div id="dialog-confirm" title="FDK_Link" style="hide:'true'">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 25px 0;"></span>FDK_Link 설치 확인에 실패했습니다.<br>FDK_Link 미설치 시에는 '설치' 버튼을 누르시고<br>이미 설치된 경우에는 '실행' 버튼을  누른 후 '연결' 버튼을 눌러주세요</p>
+</div>
+
+<table border = 0 cellspacing = 10>
+	<tr>
+	  <td align=center colspan=2>
+	  <br>
+      <b> * CAT : Print [ CAT 프린터 연동 : CAT을 프린터 기능으로 사용 ] * </b><br><br>
+       ( 영수증, 사인, 바코드, 이미지 출력 ) <br>
+      <hr align = left width = 730>
+
+      </td>
+	</tr>
+	<tr>
+		<td>
+			<!---------------------------------------------------------------------------------------->
+			<table cellspacing = 8>
+				<tr>
+					<td rowspan="2"><input type="button"  id="btnSearchCAT" onclick="btnSearchCAT_click();" value= "보안 단말기 찾기" style="width:110;height:50;"/></td>
+					 <td><font size=2>Port</font></td>
+					 <td><input type="text" id="txtPortNoCAT"  disabled/></td>
+				</tr>
+				<tr>
+					 <td><font size=2>Baudrate</font></td> 
+					 <td><input type="text" id="txtBaudrateNoCAT"  disabled/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+	  <td align=center colspan=2>
+      <hr align = left width = 730>
+      <b> - FreeStyle 샘플 - </b>
+	  <br>
+      </td>
+	</tr>
+	<tr>
+		<td colspan=2>
+			<table cellspacing = 3>
+				<tr>
+					<td><input type="button"  id="btnFsTextPrint" onclick="btnFsTextPrint_click();" value="기본출력" style="width:255;height:25;"/></td>
+					<td><input type="button"  id="btnFsImagePrint" onclick="btnFsImagePrint_click();" value="이미지 출력" style="width:210;height:25;"/>
+					<td><input type="button"  id="btnFsBarcodePrint" onclick="btnFsBarcodePrint_click(0);" value="바코드-code93" style="width:96;height:25;"/>
+					<input type="button"  id="btnFsBarcodePrint" onclick="btnFsBarcodePrint_click(1);" value="바코드-code39" style="width:96;height:25;"/>
+					<input type="button"  id="btnFsBarcodePrint" onclick="btnFsBarcodePrint_click(2);" value="바코드-code128" style="width:96;height:25;"/></td>
+				</tr>
+
+				<tr>
+					<td rowspan=4>
+						<textarea type="text" id="FsPrinttxt" style="width:255;height:210;">
+           << 고객주문서 >>
+
+[테이블] 1층-017          [손님수] 00 명
+[주문자] 이분임       [주문번호] 0049-01
+==========================================
+    상  품  명          수량     금액 구분
+------------------------------------------
+김치김밥                   1    3,000 신규
+김치라면                   1    4,000 신규
+*나무위 김밥               1       10 신규
+치즈김밥                   1    3,500 신규
+탕수육(大)                 1   13,000 신규
+------------------------------------------
+        주  문  금  액   :     23,510
+        부  가  세  액   :      2,350
+주  문  합  계  금  액   :     25,860
+------------------------------------------
+==========================================
+POS:01      [주문시간] 2019-05-23 13:21:41
+
+
+
+
+
+					</textarea></td>
+					<td><textarea type="text" id="FsImagetxt" style="width:210;height:45;">d:\Sign.bmp</textarea></td>
+					<td rowspan=4><textarea type="text" id="FsBarcodetxt" style="width:300;height:210;">19950301090101</textarea></td>
+				</tr>
+				<tr>
+					<td>
+						<input type="checkbox" id="ckbFsImageReverseType"  value='allow' /><font size=2>Load Image : Reverse Type</font><br>
+						<hr align = left width = 200>
+						<input type="radio" name="rdoFsImageAlignMode"                   value="0" /><font size=2>Image Align: Left</font><br>
+						<input type="radio" name="rdoFsImageAlignMode" checked="checked" value="1" /><font size=2>Image Align: Center</font><br>
+						<input type="radio" name="rdoFsImageAlignMode"                   value="2" /><font size=2>Image Align: Right</font><br>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input type="button"  id="btnFsImageUpLoad" onclick="btnFsImageUpLoad_click();" value="CAT에 이미지 업로드" style="width:210;height:25;"/>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input type="button"  id="btnFsUpLoadPrint" onclick="btnFsUpLoadPrint_click();" value="CAT에 업로드된 이미지 출력" style="width:210;height:25;"/></td>
+					</td>
+				</tr>
+			</table>		
+		</td>
+	</tr>
+	<tr>
+	  <td align=center colspan=2>
+      <hr align = left width = 730>
+	  <br>
+      <b> - Epson 샘플 - </b>
+	  <br>
+      </td>
+	  
+	</tr>
+	<tr>
+		<td colspan=2>
+		※EPSON 이미지출력시 이미지 가로사이는 160px고정 그외 사이즈는 출력시 이미지 깨짐
+	  </td>
+	</tr>
+	<tr>
+		<td colspan=2>
+			<table cellspacing = 3 >
+				<tr>
+					<td><input type="button"  id="btnEpTextPrint" onclick="btnEpTextPrint_click();" value="기본출력" style="width:255;height:25;"/></td>
+					<td><input type="button"  id="btnEpImagePrint" onclick="btnEpImagePrint_click();" value="이미지 출력" style="width:210;height:25;"/></td>
+					<td><input type="button"  id="btnEpBarcodePrint" onclick="btnEpBarcodePrint_click(0);" value="바코드-code93" style="width:96;height:25;"/>
+					<input type="button"  id="btnEpBarcodePrint" onclick="btnEpBarcodePrint_click(1);" value="바코드-code39" style="width:96;height:25;"/>
+					<input type="button"  id="btnEpBarcodePrint" onclick="btnEpBarcodePrint_click(2);" value="바코드-code128" style="width:96;height:25;"/></td>
+				</tr>
+				<tr>
+					<td rowspan=2><textarea type="text" id="EpPrinttxt" style="width:255;height:250;">
+          << 고객주문서 >>
+
+[테이블] 1층-017          [손님수] 00 명
+[주문자] 이분임       [주문번호] 0049-01
+==========================================
+    상  품  명          수량     금액 구분
+------------------------------------------
+김치김밥                   1    3,000 신규
+김치라면                   1    4,000 신규
+*나무위 김밥               1       10 신규
+치즈김밥                   1    3,500 신규
+탕수육(大)                 1   13,000 신규
+------------------------------------------
+        주  문  금  액   :     23,510
+        부  가  세  액   :      2,350
+주  문  합  계  금  액   :     25,860
+------------------------------------------
+==========================================
+POS:01      [주문시간] 2019-05-23 13:21:41
+
+
+
+
+
+
+i
+					</textarea></td>
+					<td><textarea type="text" id="EpImagetxt" style="width:210;height:55;">d:\Sign.bmp</textarea></td>
+					<td><textarea type="text" id="EpBarcodetxt" style="width:300;height:55;">19950301090101</textarea></td>
+				</tr>
+				<tr>
+					<td>
+							<input type="checkbox" id="ckbEpImageReverseType"                value='allow' /><font size=2>Load Image : Reverse Type</font><br>
+							<hr align = left width = 200>
+							<input type="radio" name="rdoEpImageAlignMode"                   value="0" /><font size=2>Image Align: Left</font><br>
+							<input type="radio" name="rdoEpImageAlignMode" checked="checked" value="1" /><font size=2>Image Align: Center</font><br>
+							<input type="radio" name="rdoEpImageAlignMode"                   value="2" /><font size=2>Image Align: Right</font><br>
+							<hr align = left width = 200>
+							<input type="radio" name="rdoEpImagePrintMode" checked="checked" value="0" /><font size=2>Image Normal Mode</font><br>
+							<input type="radio" name="rdoEpImagePrintMode"                   value="1" /><font size=2>Image Double-wide</font><br>
+							<input type="radio" name="rdoEpImagePrintMode"                   value="2" /><font size=2>Image Double-tall</font><br>
+							<input type="radio" name="rdoEpImagePrintMode"                   value="3" /><font size=2>Image Quadruple</font></td>
+					<td><input type="checkbox" id="ckbPrintEpBarcodeUnderText"  value='allow' checked="checked" /><font size=2>Print Barcode Text</font><br><br><br><br><br><br><br><br><br><br></td>
+				</tr>
+				
+			</table>
+		</td>
+	</tr>
+</table>
+	
+<script language=javascript> 
+
+var ckbCardReadRetry_E122 = document.getElementById("ckbCardReadRetry_E122");
+var ckbReturnCardEncodingData = document.getElementById("ckbReturnCardEncodingData");
+var ckbReturnMerchantEncryptData = document.getElementById("ckbReturnMerchantEncryptData");
+var ckbReturnFDKEncryptData = document.getElementById("ckbReturnFDKEncryptData");
+var ckbReturnFDKEMVData = document.getElementById("ckbReturnFDKEMVData");
+var ckbCATUseSign = document.getElementById("ckbCATUseSign");
+var ckbCATUsePIN = document.getElementById("ckbCATUsePIN");
+
+window.onload = function()
+{
+	setTimeout(VAN_Module_Init, 0); // HTML 화면이 보여진 후 VAN_Module_Init() 함수가 호출되게 하기 위하여 setTimeout() API 를 사용하였습니다.
+}
+
+function VAN_Module_Init()
+{
+	var ret = FDK_LinkConnect();
+	
+	if ( ret == "0" )
+	{ // API 호출 성공일때 수행
+		ret = FDK_LinkPID_ReleaseAll(); // 브라우저 갱신 시 기존 PID 삭제, 모든 PID를 해제하고자 할 때 호출합니다. : 단. PID를 세션 등으로 관리하여 PID를 해제할 경우 호출할 필요가 없습니다. 
+		if ( ret == "0" )
+		{ // API 호출 성공일때 수행
+			UpdateCheck();
+		}
+	}
+	
+	//FDK_Link_Check(); // FDK_Link와의 접속 및 버전 확인 함수 	
+}
+
+
+function FDK_Link_Check()
+{
+	var strVer;
+	
+	strVer = FDK_LinkVersion();
+	if (strVer.localeCompare(fdk_link_version) == 0 && String(strVer).substring(0, 1) != '-')
+	{ // 접속성공이고 최신버전임.ex: strVer="22.6.16.10", fdk_link_version="22.6.16.10"
+		alert("FDK_Link_Check() 접속성공이고 최신버전");
+	}
+	else if (strVer.localeCompare(fdk_link_version) != 0 && String(strVer).substring(0, 1) != '-')
+	{ //  접속성공이고 최신버전이 아님 // ex: strVer="22.1.1.10", fdk_link_version="22.6.16.10"
+		alert("FDK_Link_Check() 접속성공이고 최신버전아님");
+	}
+	else 
+	{ //  접속실패 // ex: strVer="-909002, ErrorInfo : Error code:0\nmessage:undefined\nerror:NetworkError: Failed to execute 'send' on 'XMLHttpRequest': Failed to load 'http://127.0.0.1:6554/'."
+		alert("FDK_Link_Check() 접속실패");
+	}
+}
+
+function UpdateCheck()
+{
+	var strVer;
+	
+	strVer = FDK_LinkVersion();
+	if (strVer.localeCompare(fdk_link_version) != 0 && String(strVer).substring(0, 1) != '-')
+	{
+		var result = confirm('FDK_Link 업데이트 파일이 발견되었습니다. \n업데이트 하시겠습니까?');
+		if (result) {
+			FDK_LinkUpdate();
+			location.href = "./FDK_Link/install/FDK_Link_Setup_FDK_Module.exe";
+			
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+$(function() {
+	$( "#dialog-confirm" ).dialog({
+		autoOpen: false,
+		resizable: false,
+		height: "auto",
+		width: 370,
+		modal: true,
+		buttons: {
+			"설치": function() {
+				location.href = "./FDK_Link/install/FDK_Link_Setup_FDK_Module.exe";
+				$( this ).dialog( "close" );
+			},
+			"실행": function() {
+				location.href = "FdkLink:";
+			},
+			"연결": function() {
+				setTimeout(VAN_Module_Init, 0); // HTML 화면이 보여진 후 VAN_Module_Init() 함수가 호출되게 하기 위하여 setTimeout() API 를 사용하였습니다.
+				$( this ).dialog( "close" );
+			},
+			"취소": function() {
+				$( this ).dialog( "close" );
+			}
+		}
+	});
+});
+
+var arr = new Array;
+
+ $(document).keydown(function(event){
+	console.log(event.which);
+		
+	arr[0] = arr[1];
+	arr[1] = event.which;
+	
+	if (arr[0] == 73 && arr[1] == 67)
+		DisplayErr("000B8005");
+ })
+
+ //보안 단말기 찾기
+function btnSearchCAT_click() 
+{
+	SearchCAT();
+}
+
+//프리스타일 텍스트 출력
+function btnFsTextPrint_click() 
+{
+	FsTextPrint();
+}
+
+//이미지 출력
+function btnFsImagePrint_click() 
+{
+	var FsImageAlignMode = "";
+	var FsImageReverseType = "0";
+	
+	chkRadio = document.getElementsByName("rdoFsImageAlignMode");
+	for(var i=0; i<chkRadio.length;i++ ) {
+		if ( chkRadio[i].checked == true ) {
+			FsImageAlignMode = chkRadio[i].value;
+			break;
+		}
+	}
+	
+	if ( ckbFsImageReverseType.checked == true ) {
+		FsImageReverseType = "1";
+	} else {
+		FsImageReverseType = "0";
+	}
+	
+
+	FsImagePrint(FsImagetxt.value, FsImageAlignMode, FsImageReverseType);
+}
+
+//이미지 업로드
+function btnFsImageUpLoad_click() 
+{
+	var FsImageReverseType = "0";
+	if ( ckbFsImageReverseType.checked == true ) {
+		FsImageReverseType = "1";
+	} else {
+		FsImageReverseType = "0";
+	}
+
+	FsImageUpLoad(FsImagetxt.value, FsImageReverseType);
+}
+
+//업로드 출력
+function btnFsUpLoadPrint_click() 
+{
+	var FsImageAlignMode = "";
+	
+	chkRadio = document.getElementsByName("rdoFsImageAlignMode");
+	for(var i=0; i<chkRadio.length;i++ ) {
+		if ( chkRadio[i].checked == true ) {
+			FsImageAlignMode = chkRadio[i].value;
+			break;
+		}
+	}
+	
+	FsUpLoadPrint( FsImageAlignMode );
+}
+
+//바코드 출력
+function btnFsBarcodePrint_click(strType) 
+{
+	FsBarcodePrint(strType);
+}
+
+//Epson 텍스트 출력
+function btnEpTextPrint_click() 
+{
+	EpTextPrint();
+}
+
+//이미지 출력
+function btnEpImagePrint_click() 
+{
+	var EpImagePrintMode = "";
+	var EpImageAlignMode = "";
+	var chkRadio = "";
+	chkRadio = document.getElementsByName("rdoEpImageAlignMode");
+	for(var i=0; i<chkRadio.length;i++ ) {
+		if ( chkRadio[i].checked == true ) {
+			EpImageAlignMode = chkRadio[i].value;
+			break;
+		}
+	}
+	chkRadio = document.getElementsByName("rdoEpImagePrintMode");
+	for(var i=0; i<chkRadio.length;i++ ) {
+		if ( chkRadio[i].checked == true ) {
+			EpImagePrintMode = chkRadio[i].value;
+			break;
+		}
+	}
+	
+	var EpImageReverseType = "0";
+	if ( ckbEpImageReverseType.checked == true ) {
+		EpImageReverseType = "1";
+	} else {
+		EpImageReverseType = "0";
+	}
+
+	EpImagePrint(EpImagetxt.value, EpImageAlignMode, EpImagePrintMode, EpImageReverseType);
+}
+
+//바코드 출력
+function btnEpBarcodePrint_click(strType) 
+{
+	var bPrintBarcodeText = true;
+	if ( ckbPrintEpBarcodeUnderText.checked == true ) {
+		bPrintBarcodeText = true;
+	} else {
+		bPrintBarcodeText = false;
+	}
+	EpBarcodePrint(strType, bPrintBarcodeText);
+	
+}
+
+</script>

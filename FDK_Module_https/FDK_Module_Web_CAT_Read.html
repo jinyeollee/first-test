@@ -1,0 +1,354 @@
+﻿<head>
+
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<script	src="./FDK_Link/FDK_Link_Local_Server.js"></script>
+<script	src="./FDK_Link/install/FDK_Link_Version.js"></script>
+<link rel="stylesheet" href="./FDK_Link/jquery-ui.css">
+<script src="./FDK_Link/jquery-ui.js"></script>
+
+<script type = "text/javascript" src="FDK_Module_Web_CAT_Read.js" charset='utf-8'></script>
+
+</head>
+
+<div id = "Progress_Loading">
+<img src="./FDK_Link/Progress.gif"/>
+</div>
+
+<style type = "text/css">
+#Progress_Loading
+{
+   position: absolute;
+   left: 50%;
+   top: 50%;
+   div{background:#fff, opacity:0.6;}
+}
+</style>
+
+<div id="dialog-confirm" title="FDK_Link" style="hide:'true'">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 25px 0;"></span>FDK_Link 설치 확인에 실패했습니다.<br>FDK_Link 미설치 시에는 '설치' 버튼을 누르시고<br>이미 설치된 경우에는 '실행' 버튼을  누른 후 '연결' 버튼을 눌러주세요</p>
+</div>
+
+<table border = 0 cellspacing = 10>
+	<tr>
+		<td align=center colspan=2>
+			<br>
+		  <b> * CAT : Read [ CAT 리더기 연동 : CAT을 리더기 기능으로 사용 ] * </b><br><br>
+		   ( MPOS-1700AE : 특수 -> 2.사용자용 -> 3.기능설정 -> 6.POS설정 -> 2.직렬통신 -> 연동유형:2.리더기 ) <br>
+			<br>
+		<hr align = left width = 730>
+		</td>
+	</tr>
+	<tr align=top>
+		<td>
+			<!---------------------------------------------------------------------------------------->
+			<table border = 0 cellspacing = 4>
+				<tr>
+					<td colspan="3">
+						<TEXTAREA id="txtResult" ROWS=10 COLS=50 readonly></TEXTAREA>
+					</td>
+				</tr>
+				<tr>
+					 <td><font size=2>사업자 번호</font></td>
+					 <td><input type="text" id="txtBizNo"    value="3000000000" /></td>
+					 <td rowspan="3"><input type="button"  id="btnPosDownload" onclick="btnPosDownload_click();" value="POS Download" style="width:110;height:80;"/></td>
+				</tr>
+				<tr>
+					 <td><font size=2>POS 일련 번호</font></td>
+					 <td><input type="text" id="txtSerialNo"  value="3000000000" /></td>
+				</tr>
+				<tr>
+					 <td><font size=2>CAT ID</font></td>
+					 <td><input type="text" id="txtCATID"  value="10069371"  disabled/></td>
+				</tr>
+			</table>
+		</td>
+		<td align=top>
+			<!---------------------------------------------------------------------------------------->
+			<table>
+				<tr>
+					 <td><font size=2>거래금액</font></td>
+					 <td><input type="text" id="txtTransactionAmount"  value="1004" style="width:110;height:25;"/></td>
+					 <td><font size=2>승인번호</font></td>
+					 <td><input type="text" id="txtAuthorizationNumber"  style="width:115;height:25;"/></td>
+				</tr>
+				<tr>			 	
+					 <td colspan=2><input type="checkbox" id="ckbCardReadRetry_E122"  value='allow' /><font size=2>IC 카드 연속 읽기 허용</font></td>
+					 <td><font size=2>승인날짜</font></td>
+					 <td><input type="text" id="txtAuthorizationDate"  style="width:115;height:25;"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>	
+	<tr>
+		<td align=center colspan=2>
+			<hr align = left width = 730>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<!---------------------------------------------------------------------------------------->
+			<table cellspacing = 8>
+				<tr>
+					<td rowspan="2"><input type="button"  id="btnSearchCAT" onclick="btnSearchCAT_click();" value= "보안 단말기 찾기" style="width:110;height:50;"/></td>
+					 <td><font size=2>Port</font></td>
+					 <td><input type="text" id="txtPortNoCAT"  disabled/></td>
+				</tr>
+				<tr>
+					 <td><font size=2>Baudrate</font></td> 
+					 <td><input type="text" id="txtBaudrateNoCAT"  disabled/></td>
+				</tr>
+			</table>
+			<hr align = left width = 350>
+			<!---------------------------------------------------------------------------------------->
+			<table cellspacing = 3>
+				<tr>
+					<td><input type="button"  id="btnCATInformationSecurityCertification_ISC" onclick="btnCATInformationSecurityCertification_ISC_click();" value="보안 단말기 무결성 검사" style="width:170;height:25;"/></td>
+					<td><input type="button"  id="btnCATInformationSecurityCertification_ISD" onclick="btnCATInformationSecurityCertification_ISD_click();" value="보안 단말기 정보 얻기" style="width:170;height:25;"/></td>
+				</tr>
+			</table>
+			<hr align = left width = 350>
+			<!---------------------------------------------------------------------------------------->
+			<table cellspacing = 3>
+				<tr>
+					<td><input type="button"  id="btnCATSignTest" onclick="btnCATSignTest_click();" value="서명 테스트(CAT)" style="width:170;height:25;"/></td>
+					<td><input type="button"  id="btnCATPINTest" onclick="btnCATPINTest_click();" value="PIN 테스트(CAT)" style="width:170;height:25;"/></td>
+				</tr>
+			</table>			
+		</td>
+		<td>
+      <!---------------------------------------------------------------------------------------->
+      <table cellspacing = 3>
+        <tr>
+          <td>
+          <input type="checkbox" id ="ckbCATUseSign" checked/><font size=2>서명 받기</font>
+          <input type="checkbox" id ="ckbCATUsePIN" checked/><font size=2>PIN 받기</font>
+		  <input type="text" id="txtStateCredit"  style="width:115;height:25;"  disabled/>
+          </td>          
+        </tr>
+        <tr>
+        	<td colspan=2><input type="text" id="txtCATCardNum"  style="width:342;height:25;" readonly disabled/></td>
+        </tr>        
+        <tr>
+          <td>
+          <input type="button"  id="btnCreditAuthNewCAT" onclick="btnCreditAuthNewCAT_click();" value= "승인 (CAT-POS)"  style="width:168;height:25;"/>                    
+          <input type="button"  id="btnCreditCancelNewCAT" onclick="btnCreditCancelNewCAT_click();" value= "승인취소 (CAT-POS)"  style="width:168;height:25;"/>	      
+	      </td>
+        </tr>
+      </table>
+      <hr align = left width = 350>
+			<!---------------------------------------------------------------------------------------->
+			<table cellspacing = 2>
+				<tr>
+					<td rowspan="2"><input type="button"  id="btnCashICBalanceInquiryCAT" onclick="btnCashICBalanceInquiryCAT_click();" value= "현금IC 잔액 조회 (CAT-POS)" style="width:130px;white-space: normal;height:55;"/></td>
+					<td><input type="button"  id="btnCashICAuthCAT" onclick="btnCashICAuthCAT_click();" value= "현금IC 승인 (CAT-POS)"  style="width:210;height:25;"/></td>
+				</tr>
+				<tr>
+					 <td><input type="button"  id="btnCashICCancelCAT" onclick="btnCashICCancelCAT_click();" value= "현금IC 승인취소 (CAT-POS)"  style="width:210;height:25;"/></td>
+				</tr>
+			</table>
+    </td>
+	<tr>
+</table>
+	
+<script language=javascript> 
+
+var ckbCardReadRetry_E122 = document.getElementById("ckbCardReadRetry_E122");
+var ckbReturnCardEncodingData = document.getElementById("ckbReturnCardEncodingData");
+var ckbReturnMerchantEncryptData = document.getElementById("ckbReturnMerchantEncryptData");
+var ckbReturnFDKEncryptData = document.getElementById("ckbReturnFDKEncryptData");
+var ckbReturnFDKEMVData = document.getElementById("ckbReturnFDKEMVData");
+var ckbCATUseSign = document.getElementById("ckbCATUseSign");
+var ckbCATUsePIN = document.getElementById("ckbCATUsePIN");
+
+window.onload = function()
+{
+	setTimeout(VAN_Module_Init, 0); // HTML 화면이 보여진 후 VAN_Module_Init() 함수가 호출되게 하기 위하여 setTimeout() API 를 사용하였습니다.
+}
+
+function VAN_Module_Init()
+{
+	var ret = FDK_LinkConnect();
+	
+	if ( ret == "0" )
+	{ // API 호출 성공일때 수행
+		ret = FDK_LinkPID_ReleaseAll(); // 브라우저 갱신 시 기존 PID 삭제, 모든 PID를 해제하고자 할 때 호출합니다. : 단. PID를 세션 등으로 관리하여 PID를 해제할 경우 호출할 필요가 없습니다. 
+		if ( ret == "0" )
+		{ // API 호출 성공일때 수행
+			UpdateCheck();
+		}
+	}
+}
+
+////이벤트 수신 시작
+//function EventStart_E1FF_EasyMod_NotUse()
+//{
+//    var iProcID = FDK_Module.FDK_Creat();
+//    FDK_Module.FDK_Input(iProcID, "UseKeyEvent", "1");
+//    FDK_Module.FDK_Input(iProcID, "@/Equipment/StateView_Show", "false");//화면에 상태창 보여주지 않음.
+//    FDK_Module.FDK_Input(iProcID, "@/Common/HotKey_Cancel", "1011121B");//취소버튼
+//    FDK_Module.FDK_Input(iProcID, "@/Common/ExecuteNonblock", "true");//nonblock 형태로 실행하는 옵션
+//
+//    var iRet = FDK_Module.FDK_Execute(iProcID, "Equipment/SecurityCardRead/Listen_Event_E1FF_EasyMod");
+//    if (-8500 != iRet)
+//    {
+//    	FDK_Module.FDK_Destroy(iProcID);
+//        alert("이벤트 모니터 실행 실패");
+//        iProcID = 0;
+//    }
+//}
+//
+
+function compareVersions(v1, v2) {
+  // 두 버전을 '.'을 기준으로 나눔.
+  const v1Parts = v1.split('.');
+  const v2Parts = v2.split('.');
+ 
+  // 각 세그먼트를 정수로 변환하여 비교
+  for (let i = 0; i < v1Parts.length; i++) {
+    const v1Part = parseInt(v1Parts[i]);
+    const v2Part = parseInt(v2Parts[i]);
+ 
+    if (v1Part > v2Part) {
+      return 1;
+    } else if (v1Part < v2Part) {
+      return -1;
+    }
+  }
+ 
+  // 모든 세그먼트가 같으면 버전 동일
+  return 0;
+}
+
+var strVer__CashIC_MultipleAccountAttemptCount = "23.9.15.10"; // 현금IC 정보를 읽을 때 복수계좌비밀번호 시도횟수를 지원하는 버전 설정  [ 23.9.15.10 이후부터 지원 ]
+var blSupport__CashIC_MultipleAccountAttemptCount = false;     // 로컬에 설치된 버전이 현금IC 정보를 읽을 때 복수계좌비밀번호 시도횟수를 지원하는 버전인지 판단 [ 23.9.15.10 이후부터 지원 ]
+
+function UpdateCheck()
+{
+	var strVer;
+	
+	strVer = FDK_LinkVersion();
+	// 로컬에 설치되어 운영중인 버전이 특정버전 이상인지 판단 처리 : 설치된 모듈에 따라서 필드의 Key 값의 유무가 발생할 수 있고, 존재하지 않는 Key 값으로 FDK_Module.FDK_Input() 했을 경우 -2002 에러가 발생함, 능동적인 입력값 처리를 위하여 사용
+	blSupport__CashIC_MultipleAccountAttemptCount =( compareVersions(strVer, strVer__CashIC_MultipleAccountAttemptCount ) >= 0 ) ? true : false;  // 로컬에 설치된 버전이 현금IC 정보를 읽을 때 복수계좌비밀번호 시도횟수를 지원하는 버전인지 판단 [ 23.9.15.10 이후부터 지원 ]
+	
+	// 버전 업데이트 판단
+	if (strVer.localeCompare(fdk_link_version) != 0 && String(strVer).substring(0, 1) != '-')
+	{
+		var result = confirm('FDK_Link 업데이트 파일이 발견되었습니다. \n업데이트 하시겠습니까?');
+		if (result) {
+			FDK_LinkUpdate();
+			location.href = "./FDK_Link/install/FDK_Link_Setup_FDK_Module.exe";
+			
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+$(function() {
+	$( "#dialog-confirm" ).dialog({
+		autoOpen: false,
+		resizable: false,
+		height: "auto",
+		width: 370,
+		modal: true,
+		buttons: {
+			"설치": function() {
+				location.href = "./FDK_Link/install/FDK_Link_Setup_FDK_Module.exe";
+				$( this ).dialog( "close" );
+			},
+			"실행": function() {
+				location.href = "FdkLink:";
+			},
+			"연결": function() {
+				setTimeout(VAN_Module_Init, 0); // HTML 화면이 보여진 후 VAN_Module_Init() 함수가 호출되게 하기 위하여 setTimeout() API 를 사용하였습니다.
+				$( this ).dialog( "close" );
+			},
+			"취소": function() {
+				$( this ).dialog( "close" );
+			}
+		}
+	});
+});
+
+var arr = new Array;
+
+ $(document).keydown(function(event){
+	console.log(event.which);
+		
+	arr[0] = arr[1];
+	arr[1] = event.which;
+	
+	if (arr[0] == 73 && arr[1] == 67)
+		DisplayErr("000B8005");
+ })
+
+///////////////	보안 단말기 ///////////////
+
+//POS Download
+function btnPosDownload_click() 
+{
+	PosDownload();
+}
+
+//보안 단말기 찾기
+function btnSearchCAT_click() 
+{
+	SearchCAT();
+}
+
+//보안 단말기 무결성 검사
+function btnCATInformationSecurityCertification_ISC_click() 
+{
+	CATInformationSecurityCertification_ISC();
+}
+
+//보안 단말기 정보 얻기
+function btnCATInformationSecurityCertification_ISD_click() 
+{
+	CATInformationSecurityCertification_ISD();
+}
+
+//서명테스트(CAT)
+function btnCATSignTest_click() 
+{
+	CATSignTest();
+}
+
+//PIN테스트(CAT)
+function btnCATPINTest_click() 
+{
+	CATPINTest();
+}
+
+//승인 (CAT-POS)
+function btnCreditAuthNewCAT_click() 
+{
+	CreditAuthNewCAT();
+}
+
+//승인취소 (CAT-POS)
+function btnCreditCancelNewCAT_click() 
+{
+	CreditCancelNewCAT();
+}
+
+//현금IC 잔액 조회 (CAT-POS)
+function btnCashICBalanceInquiryCAT_click() 
+{
+	CashICBalanceInquiryCAT();
+}
+
+//현금IC 승인 (CAT-POS)
+function btnCashICAuthCAT_click() 
+{
+	CashICAuthCAT();
+}
+
+//현금IC 승인취소 (CAT-POS)
+function btnCashICCancelCAT_click() 
+{
+	CashICCancelCAT();
+}
+
+</script>
