@@ -27,6 +27,50 @@ document.write("<script type='text/javascript' src='" + WebPath_FDKData + "/FDKD
 document.write("<link rel='stylesheet' type='text/css' href='" + WebPath_FDKData + "/style.css'/>");
 document.write("<script type='text/javascript' src='" + WebPath_FDKData	+ "/common.js'></script>");
 
+// ============================================================================
+// FDK_Link 서버 접속 정보 (전역 설정)
+// 프로토콜 자동 선택 방식
+// Chrome Private Network Access 대응 (2025-01-06)
+// ============================================================================
+var FDK_Server_Config = {
+	// 서버 URL 설정
+	HTTP_URL: "http://127.0.0.1:6554",      // HTTP 서버
+	HTTPS_URL: "https://127.0.0.1:6555",    // HTTPS 서버
+	
+	// 현재 페이지의 프로토콜에 맞춰 자동 선택
+	getURL: function() {
+		if (window.location.protocol === 'https:') {
+			return this.HTTPS_URL;
+		} else {
+			return this.HTTP_URL;
+		}
+	},
+	
+	// 디버깅용 정보 출력
+	printConfig: function() {
+		console.log('╔═══════════════════════════════════════════════════════╗');
+		console.log('║          FDK Server Configuration                     ║');
+		console.log('╠═══════════════════════════════════════════════════════╣');
+		console.log('║ Page Protocol  :', window.location.protocol.padEnd(32), '║');
+		console.log('║ Selected URL   :', this.getURL().padEnd(32), '║');
+		console.log('╟───────────────────────────────────────────────────────╢');
+		console.log('║ HTTP URL       :', this.HTTP_URL.padEnd(32), '║');
+		console.log('║ HTTPS URL      :', this.HTTPS_URL.padEnd(32), '║');
+		console.log('╠═══════════════════════════════════════════════════════╣');
+		console.log('║ Auto-Selection : ✅ ENABLED                           ║');
+		console.log('║ - HTTPS page   → HTTPS server                         ║');
+		console.log('║ - HTTP page    → HTTP server                          ║');
+		console.log('╚═══════════════════════════════════════════════════════╝');
+	}
+};
+
+// 페이지 로드 시 설정 확인 (개발 모드)
+if (typeof console !== 'undefined' && console.log) {
+	console.log('[FDK_Server_Config] Initialized');
+	console.log('[FDK_Server_Config] Page Protocol:', window.location.protocol);
+	console.log('[FDK_Server_Config] Selected URL:', FDK_Server_Config.getURL());
+}
+
 var FDKBase64 =
 {
 	encode : function(strData)
@@ -267,95 +311,273 @@ var Win4POS_SignPadData = {
 	}
 }
 
+// ============================================================================
 // FDK Link와 직접 통신이 발생하는 모듈
+// Chrome Private Network Access 대응 버전 (2025-01-06 수정)
+// - 프로토콜 자동 선택: FDK_Server_Config.getURL()
+// - HTTPS 환경에서 targetAddressSpace: 'private' 자동 적용
+// - 모든 브라우저 호환 (Chrome, Firefox, Safari, Edge, IE11)
+// ============================================================================
 _Transaction = function(oSendData, bAsync, strFunction, iTimeout)
 {
-	// var oRecvData = {
-	// 		"Key" : "",
-	// 		"LibName" : "",
-	// 		"MultiValueIndex" : "",
-	// 		"Port" : "",
-	// 		"Return" : "LTkwOTAwMg==" // <=== "-909002", 
-	// 		"ServerIP" : "",
-	// 		"TranID" : "",
-	// 		"Value" : "",
-	// 		"WorkType" : ""
-	// 	};	
-
 	var oRecvData = {
 		"Key" : "",
 		"LibName" : "",
 		"MultiValueIndex" : "",
 		"Port" : "",
-		"Return" : "LTkwOTAwMg==",
+		"Return" : "LTkwOTAwMg==",  // "-909002" (Base64)
 		"ServerIP" : "",
 		"TranID" : "",
 		"Value" : "",
 		"WorkType" : ""
 	};	
 	
-	// var strURL = "https://fdklink.firstdatacorp.co.kr:6554";
-	//var strURL = "http://127.0.0.1:6554";
-	var strURL = "https://127.0.0.1:6555";
+	// ★★★ 전역 설정에서 URL 가져오기 (프로토콜 자동 선택) ★★★
+	var strURL = FDK_Server_Config.getURL();
 	
-	// 2021-11-10-JYL [ajax 이슈수정] ajaxPrefilter 에 셋팅시 전체의 ajax 통신에 영향을 발생시키므로 제거함.
-	//jQuery.ajaxPrefilter('json', function(options, orig, jqXHR) {
-	//	return 'jsonp';
-	//});
-
-	var strMsg = "" // Recv Log
-
-	jQuery.support.cors = true;
-
-	jQuery.ajax({
-		type : "POST",
-		url : strURL,
-		contentType : "application/x-www-form-urlencoded; charset=UTF-8",
-		data : oSendData,
-		datatype : "jsonp",
-		timeout : iTimeout,
-		jsonp : "callback",
-		async : bAsync,
-		cache : false,
-
-		success : function(data) {
-			if(data != '{""}'){
+	// Chrome Private Network Access 지원 여부 확인
+	var useFetchAPI = typeof fetch !== 'undefined';
+	
+	if (useFetchAPI) {
+		// ====================================================================
+		// 최신 브라우저: fetch API 사용 (Chrome Private Network Access 지원)
+		// ====================================================================
+		
+		// ★★★ oSendData가 이미 문자열인지 체크 (FDK_Link_Local_Server.js 호환) ★★★
+		var jsonString;
+		if (typeof oSendData === 'string') {
+			// 이미 JSON 문자열 → 그대로 사용 (FDK_Link_Local_Server.js에서 JSON.stringify 사용)
+			jsonString = oSendData;
+		} else {
+			// 객체 → JSON 문자열로 변환
+			jsonString = JSON.stringify(oSendData);
+		}
+		
+		// fetch 옵션
+		var fetchOptions = {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+			},
+			body: jsonString,  // ★★★ 타입 체크된 JSON 문자열
+			cache: 'no-cache'
+		};
+		
+		// ★★★ HTTPS 프로토콜일 경우에만 targetAddressSpace 추가 ★★★
+		if (window.location.protocol === 'https:') {
+			fetchOptions.targetAddressSpace = 'private';
+		}
+		
+		// Timeout 처리
+		var timeoutId;
+		var timeoutPromise = new Promise(function(resolve, reject) {
+			timeoutId = setTimeout(function() {
+				reject(new Error('Request timeout'));
+			}, iTimeout);
+		});
+		
+		// fetch 요청
+		var fetchPromise = fetch(strURL, fetchOptions)
+			.then(function(response) {
+				clearTimeout(timeoutId);
 				
-				try {
-					oRecvData = JSON.parse(data, null, 2);
-
-					// Recv Log
-					//strMsg = "_Transaction() Recv [Success] oRecvData=\n" + JSON.stringify(oRecvData, null, 2);
-					//console.log(strMsg);
-					
-					if(bAsync == true ){
-						strFunction(oRecvData.Return, oRecvData);
+				if (!response.ok) {
+					throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+				}
+				
+				return response.text();
+			})
+			.then(function(data) {
+				if (data != '{""}') {
+					try {
+						oRecvData = JSON.parse(data);
+						
+						if (bAsync == true) {
+							strFunction(oRecvData.Return, oRecvData);
+						}
+					} catch(e) {
+						console.error('[_Transaction] JSON parse error:', e);
 					}
-				} catch( e ) {
+				}
+				
+				$('#Progress_Loading').hide();
+				return oRecvData;
+			})
+			.catch(function(error) {
+				clearTimeout(timeoutId);
+				console.error('[_Transaction] Fetch error:', error);
+				console.error('[_Transaction] URL:', strURL);
+				console.error('[_Transaction] Protocol:', window.location.protocol);
+				
+				$('#dialog-confirm').dialog('open');
+				
+				if (bAsync == true) {
+					strFunction(oRecvData.Return, oRecvData);
+				}
+				
+				$('#Progress_Loading').hide();
+				return oRecvData;
+			});
+		
+		// 비동기 모드
+		if (bAsync == true) {
+			Promise.race([fetchPromise, timeoutPromise]);
+			return oRecvData;
+		}
+		// 동기 모드는 fetch에서 지원 안 함 - jQuery.ajax로 폴백
+		else {
+			console.warn('[_Transaction] Synchronous mode not supported with fetch API, falling back to jQuery.ajax');
+			//useFetchAPI = false;
+		}
+	}
+	
+	// ====================================================================
+	// 구형 브라우저 또는 동기 모드: jQuery.ajax 사용 (폴백)
+	// ====================================================================
+	if (!useFetchAPI) {
+		jQuery.support.cors = true;
+		
+		jQuery.ajax({
+			type : "POST",
+			url : strURL,  // ★★★ 전역 설정 URL 사용
+			contentType : "application/x-www-form-urlencoded; charset=UTF-8",
+			data : oSendData,
+			datatype : "jsonp",
+			timeout : iTimeout,
+			jsonp : "callback",
+			async : bAsync,
+			cache : false,
+			
+			beforeSend: function(xhr) {
+				console.log('[_Transaction] Sending request to', strURL);
+				console.log('[_Transaction] Protocol:', window.location.protocol);
+			},
+			
+			xhrFields: {
+				withCredentials: false
+			},
+
+			success : function(data) {
+				if(data != '{""}'){
 					
+					try {
+						oRecvData = JSON.parse(data);
+						
+						if(bAsync == true ){
+							strFunction(oRecvData.Return, oRecvData);
+						}
+					} catch( e ) {
+						console.error('[_Transaction] JSON parse error:', e);
+					}
+				}
+			},
+			error : function(request, status, error) {
+				console.error('[_Transaction] Ajax error:', status, error);
+				console.error('[_Transaction] Status code:', request.status);
+				console.error('[_Transaction] Response:', request.responseText);
+				console.error('[_Transaction] URL:', strURL);
+				console.error('[_Transaction] Protocol:', window.location.protocol);
+				
+				// 에러 원인 분석
+				if (request.status === 0 || status === 'error') {
+					console.error('[_Transaction] Possible causes:');
+					console.error('  1. FDK_Link server is not running');
+					console.error('  2. SSL certificate not trusted (HTTPS only)');
+					console.error('  3. Chrome Private Network Access blocked (HTTPS only)');
+					console.error('  4. Check server URL:', strURL);
+				}
+				
+				$('#dialog-confirm').dialog('open');
+				
+				if(bAsync == true ){
+					strFunction(oRecvData.Return, oRecvData);
 				}
 			}
-		},
-		error : function(request, status, error) {
-			
-			// 2023-06-09-JYL [에러일 경우 응답값 또는 기본값으로 처리되도록 별도 가공처리 하지 않음: 주석처리]
-			//var strLastError = "Error code:" + request.status + "\n"
-			//		+ "message:" + request.responseText + "\n" + "error:"
-			//		+ error;
-			//oRecvData['Return'] = RET_WebConnectError + ", ErrorInfo : " + strLastError;
-			
-			$('#dialog-confirm').dialog('open');
+		});
 
-			//strMsg = "_Transaction() Recv [Error] oRecvData=\n" + JSON.stringify(oRecvData, null, 2);
-			//console.log(strMsg);
-			
-			if(bAsync == true ){
-				strFunction(oRecvData.Return, oRecvData);
-			}
-		}
-	});
-
-	$('#Progress_Loading').hide();
+		$('#Progress_Loading').hide();
+	}
 	
 	return oRecvData;
 };
+
+// ============================================================================
+// 연결 테스트 함수 (디버깅용)
+// Chrome DevTools Console에서 testFDKConnection() 실행
+// ============================================================================
+function testFDKConnection() {
+	console.log('');
+	console.log('╔════════════════════════════════════════════════════════════╗');
+	console.log('║          FDK_Link Connection Test                          ║');
+	console.log('╚════════════════════════════════════════════════════════════╝');
+	
+	// 설정 정보 출력
+	FDK_Server_Config.printConfig();
+	
+	console.log('');
+	console.log('Testing connection...');
+	
+	// fetch API 사용 가능 여부
+	if (typeof fetch === 'undefined') {
+		console.warn('⚠️  fetch API not available - using jQuery.ajax (limited support)');
+		return;
+	}
+	
+	// 서버 연결 테스트
+	var strURL = FDK_Server_Config.getURL();
+	var fetchOptions = {
+		method: 'GET',
+		cache: 'no-cache'
+	};
+	
+	// HTTPS일 경우에만 targetAddressSpace 추가
+	if (window.location.protocol === 'https:') {
+		fetchOptions.targetAddressSpace = 'private';
+		console.log('✓ targetAddressSpace: private (HTTPS mode)');
+	}
+	
+	fetch(strURL, fetchOptions)
+		.then(function(response) {
+			console.log('✅ Server connection: SUCCESS');
+			console.log('   Status:', response.status, response.statusText);
+			
+			// 헤더 확인
+			var headers = {};
+			response.headers.forEach(function(value, key) {
+				headers[key] = value;
+			});
+			console.log('   Headers:', headers);
+			
+			// Private Network Access 헤더 확인 (HTTPS 모드만)
+			if (window.location.protocol === 'https:') {
+				var pnaHeader = response.headers.get('access-control-allow-private-network');
+				if (pnaHeader === 'true') {
+					console.log('✅ Private Network Access header: OK');
+				} else {
+					console.error('❌ Private Network Access header: MISSING');
+					console.error('   Server must send: Access-Control-Allow-Private-Network: true');
+				}
+			}
+			
+			return response.text();
+		})
+		.then(function(text) {
+			console.log('   Response:', text);
+		})
+		.catch(function(error) {
+			console.error('❌ Server connection: FAILED');
+			console.error('   Error:', error.message);
+			console.error('');
+			console.error('Troubleshooting:');
+			console.error('  1. Check if FDK_Link server is running');
+			console.error('  2. Verify server URL:', strURL);
+			if (window.location.protocol === 'https:') {
+				console.error('  3. Install ROOT CA certificate (HTTPS mode)');
+				console.error('  4. Server must send Private Network Access header (HTTPS mode)');
+			}
+		});
+}
+
+// 페이지 로드 시 자동 테스트 (개발 모드)
+// 실제 배포 시에는 주석 처리 권장
+// window.addEventListener('DOMContentLoaded', testFDKConnection);
